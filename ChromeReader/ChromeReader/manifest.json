@@ -1,0 +1,28 @@
+{
+	"name": "Google Reader Page Action",
+	"version": "1.0",
+	"icons": 
+	{ 
+		"48": "icons/logo-48.png",
+		"64": "icons/logo-64.png" 
+	},
+	
+	"background_page": "background.html",
+	
+	"content_scripts":
+	[
+		{
+			"matches": [ "http://*/*" ],
+			"js": [ "feed_finder.js" ]
+		}
+	],
+	
+	"page_action":
+	{
+		"default_icon": "icons/page_action.png",
+		"popup": "popup.html",
+		"type": "tab"
+	},
+	
+	"permissions": [ "tabs", "http://*/*" ]
+}
