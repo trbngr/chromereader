@@ -1,11 +1,12 @@
 <html>
 <head>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script type="text/javascript" src="popup.js"></script>
-<link type="text/css" rel="stylesheet" href="popup.css" />
+    <link type="text/css" rel="stylesheet" href="popup.css" />
 </head>
 <body>
-    <div id="connecting">Connecting to Google Reader... <span id="failed" class="hidden"></span></div>
+    <div id="connecting">Connecting to Google Reader...</div>
+    
+    <div id="failed" class="hidden">
+    </div>
 
     <div id="connected" class="hidden">
         <a id="remove" href="#">Remove</a>
@@ -21,7 +22,10 @@
         </div>
         
         <div id="buttons">
-            <button id="close" onclick="window.close();">Close</button>
+            <button id="close">Close</button>
         </div>
     </div>
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
 </body>

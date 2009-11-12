@@ -3,7 +3,7 @@
 window.createReader = function()
 {
     return new GoogleReaderClient();
-}
+};
 
 chrome.extension.onConnect.addListener(function(port)
 {

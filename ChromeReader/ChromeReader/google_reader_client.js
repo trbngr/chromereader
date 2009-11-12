@@ -82,30 +82,20 @@ GoogleReaderClient.prototype.unsubscribe = function(feed, callback)
         ac: 'unsubscribe'
     });
 };
+GoogleReaderClient.prototype.setTitle = function(feed, title, callback)
+{
+    this._post('subscription/edit', callback,
+    {
+        s: this._makeFeedId(feed), 
+        ac: 'edit',
+        t: title
+    });
+};
 
 GoogleReaderClient.prototype.getSubscriptions = function(callback)
 {
     this._get('subscription/list', callback,
     {
-        output: 'json'
-    });
-};
-
-GoogleReaderClient.prototype.getStream = function(feed, callback)
-{
-    this._get('stream/contents', callback,
-    {
-        s: this._makeFeedId(feed),
-        n: 1
-    });
-};
-
-GoogleReaderClient.prototype.getStreamDetails = function(feed, callback)
-{
-    this._get('stream/details', callback,
-    {
-        s: this._makeFeedId(feed),
-        fetchTrends: false,
         output: 'json'
     });
 };

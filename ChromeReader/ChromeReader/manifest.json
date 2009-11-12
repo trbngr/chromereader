@@ -1,6 +1,6 @@
 {
-	"name": "Google Reader Page Action",
-	"version": "1.0",
+	"name": "Chrome Reader",
+	"version": "0.1",
 	"icons": 
 	{ 
 		"48": "icons/logo-48.png",
