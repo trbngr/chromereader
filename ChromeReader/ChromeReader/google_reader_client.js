@@ -32,7 +32,7 @@ GoogleReaderClient.prototype._get = function(options)
     $.ajax(options);
 };
 
-GoogleReaderClient.prototype._getToken = function(options, sync)
+GoogleReaderClient.prototype._getToken = function(options)
 {
     var self = this;
 
@@ -45,7 +45,6 @@ GoogleReaderClient.prototype._getToken = function(options, sync)
         self._get(
         {
             url: 'token',
-            async: !sync,
             dataType: 'text',
             error: options.error,
             success: function(result, status)
@@ -57,16 +56,16 @@ GoogleReaderClient.prototype._getToken = function(options, sync)
     }
 };
 
-GoogleReaderClient.prototype._post = function(options, sync)
+GoogleReaderClient.prototype._post = function(options)
 {
     var self = this;
 
     self._getToken(
     {
+        error: options.error,
         success: function(token, status)
         {
             options.type = 'POST';
-            options.async = !sync;
             options.dataType = 'text';
             options.url = self._makeUrl(options.url);
             
@@ -74,12 +73,11 @@ GoogleReaderClient.prototype._post = function(options, sync)
             options.data['T'] = token;
             
             $.ajax(options);
-        },
-        error: options.error
-    }, sync);
+        }
+    });
 };
 
-GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data, sync)
+GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data)
 {
     data.s = this._makeFeedId(feed);
 
@@ -89,7 +87,7 @@ GoogleReaderClient.prototype._editSubscription = function(feed, error, success, 
         success: success,
         error: error,
         data: data
-    }, sync);
+    });
 };
 
 GoogleReaderClient.prototype.subscribe = function(feed, error, success)
@@ -115,7 +113,7 @@ GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
     this._editSubscription(feed, error, success,
     {
         ac: 'edit', t: title
-    }, /* sync: */ true );
+    });
 };
 
 GoogleReaderClient.prototype.getSubscriptions = function(error, success)
