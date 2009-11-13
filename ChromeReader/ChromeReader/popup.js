@@ -24,7 +24,7 @@ var UI =
     
     setState: function(state)
     {
-        function setVisibility(obj, value)
+        function setIsVisible(obj, value)
         {
             if (value)
             {
@@ -36,13 +36,13 @@ var UI =
             }
         }
         
-        setVisibility(this.connecting, (state == 'connecting'));
-        setVisibility(this.connected,  ((state == 'added') || (state == 'existing')));
-        setVisibility(this.failed,     (state == 'failed'));
+        setIsVisible(this.connecting, (state == 'connecting'));
+        setIsVisible(this.connected,  ((state == 'added') || (state == 'existing')));
+        setIsVisible(this.failed,     (state == 'failed'));
         
-        setVisibility(this.added,      (state == 'added'));
-        setVisibility(this.removed,    (state == 'removed'));
-        setVisibility(this.existing,   (state == 'existing'));
+        setIsVisible(this.added,      (state == 'added'));
+        setIsVisible(this.removed,    (state == 'removed'));
+        setIsVisible(this.existing,   (state == 'existing'));
     },
     
     errorHandler: function(xhr, status, errorThrown)
@@ -61,7 +61,7 @@ function unsubscribeFeed()
             BackgroundPage.showPageAction(TabId, false);
             
             UI.setState('removed');
-            UI.closePopup();
+            window.close();
         })
     }
 }
@@ -86,6 +86,9 @@ window.onunload = function()
 
 window.onload = function()
 {
+    BackgroundPage = chrome.extension.getBackgroundPage();
+    GoogleReader = BackgroundPage.googleReader;
+
     // add event listeners
     UI.close.click(window.close);
     UI.remove.click(unsubscribeFeed);
@@ -101,10 +104,7 @@ window.onload = function()
         TabPort.onMessage.addListener(function(feeds)
         {
             Feeds = feeds;
-
-            BackgroundPage = chrome.extension.getBackgroundPage();
-            GoogleReader = BackgroundPage.createReader();        
-            
+                        
             GoogleReader.ensureSubscribed(Feeds[0], UI.errorHandler, function(result, status)
             {
                 OldTitle = result.title;

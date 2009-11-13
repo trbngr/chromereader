@@ -1,9 +1,37 @@
 /// <reference path="../jquery-1.3.2.js" />
+/// <reference path="object_cache.js" />
 
 function GoogleReaderClient()
 {
-    this._url = 'http://www.google.com/reader/api/0/';
-    this._client = 'ChromeReader'
+    var self = this;
+    
+    self._url = 'http://www.google.com/reader/api/0/';
+    self._client = 'ChromeReader'
+    
+    self._token = new ObjectCache(function(error, success)
+    {
+        self._get(
+        {
+            url: 'token',
+            dataType: 'text',
+            error: error,
+            success: success
+        });
+    });
+    
+    self._subscriptions = new ObjectCache(function(error, success)
+    {
+        self._get(
+        {
+            url: 'subscription/list',
+            success: success,
+            error: error,
+            data:
+            {
+                output: 'json'
+            }
+        });    
+    });
 }
 
 GoogleReaderClient.prototype._log = function(msg)
@@ -32,48 +60,20 @@ GoogleReaderClient.prototype._get = function(options)
     $.ajax(options);
 };
 
-GoogleReaderClient.prototype._getToken = function(options)
-{
-    var self = this;
-
-    if (self._token)
-    {
-        options.success(self._token, 'success');
-    }
-    else
-    {
-        self._get(
-        {
-            url: 'token',
-            dataType: 'text',
-            error: options.error,
-            success: function(result, status)
-            {
-                self._token = result;
-                options.success(result, status);
-            }
-        });
-    }
-};
-
 GoogleReaderClient.prototype._post = function(options)
 {
     var self = this;
 
-    self._getToken(
+    self._token.get(options.error, function(token)
     {
-        error: options.error,
-        success: function(token, status)
-        {
-            options.type = 'POST';
-            options.dataType = 'text';
-            options.url = self._makeUrl(options.url);
-            
-            options.data = options.data || { };            
-            options.data['T'] = token;
-            
-            $.ajax(options);
-        }
+        options.type = 'POST';
+        options.dataType = 'text';
+        options.url = self._makeUrl(options.url);
+        
+        options.data = options.data || { };            
+        options.data['T'] = token;
+        
+        $.ajax(options);
     });
 };
 
@@ -81,6 +81,7 @@ GoogleReaderClient.prototype._editSubscription = function(feed, error, success, 
 {
     data.s = this._makeFeedId(feed);
 
+    this._subscriptions.invalidate();
     this._post(
     {
         url: 'subscription/edit',
@@ -108,32 +109,17 @@ GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
 
 GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
 {
-    console.log('setTitle - feed: ' + feed + ' title: ' + title);
-    
     this._editSubscription(feed, error, success,
     {
         ac: 'edit', t: title
     });
 };
 
-GoogleReaderClient.prototype.getSubscriptions = function(error, success)
-{
-    this._get(
-    {
-        url: 'subscription/list',
-        success: success,
-        error: error,
-        data:
-        {
-            output: 'json'
-        }
-    });
-};
-
 GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
 {
     var self = this;
-    self.getSubscriptions(error, function(result, status)
+    
+    self._subscriptions.get(error, function(result, status)
     {
         var i;
         var feedid = self._makeFeedId(feed);

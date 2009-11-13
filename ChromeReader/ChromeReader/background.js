@@ -1,9 +1,6 @@
 /// <reference path="google_reader_client.js" />
 
-window.createReader = function()
-{
-    return new GoogleReaderClient();
-};
+window.googleReader =  new GoogleReaderClient();
 
 window.showPageAction = function(tabId, isSubscribed)
 {
@@ -37,12 +34,13 @@ chrome.extension.onConnect.addListener(function(port)
     {
         if ((msg) && (msg.action == 'FeedsDiscovered'))
         {
-            var reader = new GoogleReaderClient();
             var tabId = port.tab.id;
             
-            reader.getSubscription(msg.data[0], 
+            googleReader.getSubscription(
+                msg.data[0], 
                 function(xhr, textStatus, errorThrown) 
                 {
+                    console.log(textStatus + ' ' + errorThrown);
                 },
                 function(sub, status)
                 {

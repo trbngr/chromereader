@@ -10,8 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{2BE3463D-A91F-
 	ProjectSection(SolutionItems) = preProject
 		ChromeReader\background.js = ChromeReader\background.js
 		ChromeReader\feed_finder.js = ChromeReader\feed_finder.js
-		ChromeReader\google_reader_client.js = ChromeReader\google_reader_client.js
+		ChromeReader\object_cache.js = ChromeReader\object_cache.js
 		ChromeReader\popup.js = ChromeReader\popup.js
+		ChromeReader\reader_client.js = ChromeReader\reader_client.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{B95687EC-7E4E-477F-848C-0DD66F88192D}"
