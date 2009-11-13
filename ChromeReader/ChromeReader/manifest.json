@@ -10,10 +10,7 @@
 	
 	"content_scripts":
 	[
-		{
-			"matches": [ "http://*/*" ],
-			"js": [ "feed_finder.js" ]
-		}
+		{ "matches": [ "http://*/*" ], "js": [ "feed_finder.js" ] }
 	],
 	
 	"page_action":
@@ -22,5 +19,5 @@
 		"type": "tab"
 	},
 	
-	"permissions": [ "tabs", "http://*/*" ]
+	"permissions": [ "tabs", "http://www.google.com/reader/*" ]
 }
