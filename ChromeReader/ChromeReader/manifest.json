@@ -19,5 +19,7 @@
 		"type": "tab"
 	},
 	
-	"permissions": [ "tabs", "http://www.google.com/reader/*" ]
+	"permissions": [ "tabs", "http://www.google.com/reader/*" ],
+	
+	"update_url": "http://chromereader.googlecode.com/svn/update/updates.xml"
 }
