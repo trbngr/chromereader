@@ -14,15 +14,19 @@
         <h1 id="added" class="hidden">Subscription Added!</h1>
         <h1 id="existing" class="hidden">Subscription</h1>
         
-        <div class="row">
+        <div class="row" id="nameRow">
             <label for="feedName">Name:</label>
             <div class="input">
                 <input type="text" id="feedName" />
             </div>
         </div>
-        
-        <div id="buttons">
-            <button id="close">Close</button>
+
+        <div class="row hidden" id="foldersRow">
+            <label for="folders">Folders:</label>
+            <div class="input">
+                <ul id="folders">
+                </ul>
+            </div>
         </div>
     </div>
     

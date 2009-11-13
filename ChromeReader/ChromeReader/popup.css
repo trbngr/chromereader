@@ -1,8 +1,15 @@
 body
 {
-    font: menu;
     min-width: 17em;
     margin: 0.3em;
+    
+    cursor:default;
+    -webkit-user-select:none;
+}
+
+body, input
+{
+    font: menu;
 }
 
 h1 
@@ -19,36 +26,39 @@ h1
     padding: 0.2em 0 0 0;
 }
 
-button
+#folders
 {
-    float: right;
-    font: menu;
-    width: 5em;
-    padding: 0.2em 0;
-}
-
-label
-{
-    width: 3em;
-    float: left;
-    padding: 0.1em 0;
     margin: 0;
-}
-
-input 
-{ 
-    width: 100%; 
-    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    height: 4em;
+    border: solid 1px ThreeDShadow;
 }
 
 .row 
 {
     clear: both;
+    margin: 0.25em 0 0 0;
 }
 
-.input
+.row > label
 {
-    margin-left: 3.2em;
+    width: 3.5em;
+    float: left;
+    padding: 0.1em 0;
+    margin: 0;
+}
+
+.row > .input
+{
+    margin: 0 0 0 3.75em;
+}
+
+.row > .input > input 
+{ 
+    width: 100%; 
+    margin: 0;
 }
 
 .hidden 

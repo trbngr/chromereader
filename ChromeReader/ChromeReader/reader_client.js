@@ -8,6 +8,20 @@ function GoogleReaderClient()
     self._url = 'http://www.google.com/reader/api/0/';
     self._client = 'ChromeReader'
     
+    self._tags = new ObjectCache(function(error, success)
+    {
+        self._get(
+        {
+            url: 'tag/list',
+            success: success,
+            error: error,
+            data:
+            {
+                output: 'json'
+            }
+        });
+    });
+    
     self._token = new ObjectCache(function(error, success)
     {
         self._get(
@@ -41,12 +55,34 @@ GoogleReaderClient.prototype._log = function(msg)
 
 GoogleReaderClient.prototype._makeUrl = function(part)
 {
-    return this._url + part + '?client=' + this._client;
+    return this._url + part + '?client=' + this._client + '&ck=' + new Date().valueOf();
 };
 
 GoogleReaderClient.prototype._makeFeedId = function(url)
 {
     return 'feed/' + url;
+};
+
+GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
+{
+    var self = this;
+    
+    self._tags.get(error, function(result)
+    {
+        for (var i in result.tags)
+        {
+            var tag = result.tags[i];
+            var pieces = tag.id.split('/');
+            
+            if ((pieces) && (pieces.length == 4))
+            {
+                if ((pieces[2] == 'label') && (pieces[3] == folder))
+                {
+                    success(tag.id);
+                }
+            }
+        }
+    });
 };
 
 GoogleReaderClient.prototype._get = function(options)
@@ -91,6 +127,32 @@ GoogleReaderClient.prototype._editSubscription = function(feed, error, success, 
     });
 };
 
+GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
+{
+    var self = this;
+    
+    self._getFolderId(folder, error, function(tagId)
+    {
+        self._editSubscription(feed, error, success, 
+        {
+            ac: 'edit', a: tagId
+        });
+    });
+};
+
+GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
+{
+    var self = this;
+    
+    self._getFolderId(folder, error, function(tagId)
+    {
+        self._editSubscription(feed, error, success, 
+        {
+            ac: 'edit', r: tagId
+        });
+    });
+};
+
 GoogleReaderClient.prototype.subscribe = function(feed, error, success)
 {
     this._editSubscription(feed, error, success,
@@ -115,16 +177,39 @@ GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
     });
 };
 
+GoogleReaderClient.prototype.getFolders = function(error, success)
+{
+    var self = this;
+    
+    self._tags.get(error, function(result, status)
+    {
+        var labelRegex = /label\/(.*)$/i
+        var folders = [];
+        
+        for (var i in result.tags)
+        {
+            var tag = result.tags[i];
+            var match = labelRegex.exec(tag.id)
+            
+            if (match && match[1])
+            {
+                folders.push(match[1]);
+            }
+        }
+        
+        success(folders);
+    });
+};
+
 GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
 {
     var self = this;
     
     self._subscriptions.get(error, function(result, status)
     {
-        var i;
         var feedid = self._makeFeedId(feed);
         
-        for (i in result.subscriptions)
+        for (var i in result.subscriptions)
         {
             var subscr = result.subscriptions[i];
             

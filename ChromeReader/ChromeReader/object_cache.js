@@ -6,7 +6,7 @@ function ObjectCache(factory, maxAge)
     this._hasValue = false;
     
     this._factory = factory;
-    this._maxAge = maxAge || 600000;
+    this._maxAge = maxAge || 60000;
 }
 
 ObjectCache.prototype.age = function()

@@ -1,7 +1,6 @@
-/// <reference path="../jquery-1.3.2.js" />
+// <reference path="../jquery-1.3.2.js" />
 
 var Feeds;
-var OldTitle;
 
 var BackgroundPage;
 var GoogleReader;
@@ -10,6 +9,8 @@ var TabId;
 
 var UI = 
 {
+    oldTitle: null,
+
     connecting: $('#connecting'),
     connected:  $('#connected'),
     failed:     $('#failed'),
@@ -18,33 +19,109 @@ var UI =
     removed:    $('#removed'),
     existing:   $('#existing'),
     
-    close: $('#close'),
     remove: $('#remove'),
+    folders: $('#folders'),
     feedName: $('#feedName'),
     
-    setState: function(state)
+    nameRow: $('#nameRow'),
+    foldersRow: $('#foldersRow'),
+    
+    folderChecks: function()
     {
-        function setIsVisible(obj, value)
+        return $('input[name="folderCheck"]');
+    },
+    
+    setIsNew: function(isNew, isSubscribed)
+    {
+        BackgroundPage.showPageAction(TabId, isSubscribed);
+        
+        if (isSubscribed)
         {
-            if (value)
+            if (isNew)
             {
-                obj.removeClass('hidden');
+                this.setState('added');
             }
             else
             {
-                obj.addClass('hidden');
+                this.setState('existing');
+            }
+        }
+        else
+        {
+            this.setState('removed');
+        }
+    },
+
+    setIsVisible: function(obj, value)
+    {
+        if (value)
+        {
+            obj.removeClass('hidden');
+        }
+        else
+        {
+            obj.addClass('hidden');
+        }
+    },
+    
+    setFeedFolders: function(categories)
+    {
+        var labels = []
+        
+        for (var i in categories)
+        {
+            labels.push(categories[i].label);
+        }
+        
+        this.folderChecks().val(labels);
+    },
+    
+    setFolders: function(folders)
+    {
+        var html = [];
+        var hasFolders = (folders && folders.length);
+        
+        if (hasFolders)
+        {
+            for (var i in folders)
+            {
+                var lbl = folders[i];
+                
+                html.push('<li><input type="checkbox" name="folderCheck" value="');
+                html.push(lbl);
+                html.push('" id="folderCheck_');
+                html.push(lbl);
+                html.push('" /><label for="folderCheck_');
+                html.push(lbl);
+                html.push('">');
+                html.push(lbl);
+                html.push('</label></li>');
             }
         }
         
-        setIsVisible(this.connecting, (state == 'connecting'));
-        setIsVisible(this.connected,  ((state == 'added') || (state == 'existing')));
-        setIsVisible(this.failed,     (state == 'failed'));
+        this.setIsVisible(this.foldersRow, hasFolders);        
+        this.folders.html(html.join(''));
         
-        setIsVisible(this.added,      (state == 'added'));
-        setIsVisible(this.removed,    (state == 'removed'));
-        setIsVisible(this.existing,   (state == 'existing'));
+        this.folderChecks().change(updateFeedFolder);
+    },
+        
+    setState: function(state)
+    {
+        this.setIsVisible(this.connecting, (state == 'connecting'));
+        this.setIsVisible(this.connected,  ((state == 'added') || (state == 'existing')));
+        this.setIsVisible(this.failed,     (state == 'failed'));
+        
+        this.setIsVisible(this.added,      (state == 'added'));
+        this.setIsVisible(this.removed,    (state == 'removed'));
+        this.setIsVisible(this.existing,   (state == 'existing'));
     },
     
+    setTitle: function(title)
+    {
+        this.oldTitle = title;
+        this.feedName.val(title);
+    },
+
     errorHandler: function(xhr, status, errorThrown)
     {
         this.failed.text(status);
@@ -56,11 +133,9 @@ function unsubscribeFeed()
 {
     if (Feeds && GoogleReader)
     {
-        GoogleReader.unsubscribe(Feeds[0], UI.errorHandler, function(result, status)
+        GoogleReader.unsubscribe(Feeds[0], UI.errorHandler, function(result)
         {
-            BackgroundPage.showPageAction(TabId, false);
-            
-            UI.setState('removed');
+            UI.setIsNew(false, false);
             window.close();
         })
     }
@@ -68,14 +143,27 @@ function unsubscribeFeed()
 
 function updateFeedTitle()
 {
+    var oldTitle = UI.oldTitle;
     var newTitle = UI.feedName.val();
     
-    if ((GoogleReader) && (Feeds) && (OldTitle != newTitle))
+    if (oldTitle != newTitle)
     {
         GoogleReader.setTitle(Feeds[0], newTitle, UI.errorHandler, function(result, status)
         {
-            OldTitle = newTitle;
+            UI.oldTitle = newTitle;
         });
+    }
+}
+
+function updateFeedFolder()
+{
+    if (this.checked)
+    {
+        GoogleReader.addSubscriptionFolder(Feeds[0], this.value, UI.errorHandler);
+    }
+    else
+    {
+        GoogleReader.removeSubscriptionFolder(Feeds[0], this.value, UI.errorHandler);
     }
 }
 
@@ -90,12 +178,11 @@ window.onload = function()
     GoogleReader = BackgroundPage.googleReader;
 
     // add event listeners
-    UI.close.click(window.close);
-    UI.remove.click(unsubscribeFeed);
+    UI.remove.click(unsubscribeFeed);    
     UI.feedName.blur(updateFeedTitle);
     
     UI.feedName.focus();
-
+    
     chrome.tabs.getSelected(null, function(tab) 
     {
         TabId = tab.id;
@@ -105,20 +192,16 @@ window.onload = function()
         {
             Feeds = feeds;
                         
-            GoogleReader.ensureSubscribed(Feeds[0], UI.errorHandler, function(result, status)
+            GoogleReader.ensureSubscribed(Feeds[0], UI.errorHandler, function(subscr)
             {
-                OldTitle = result.title;
-                UI.feedName.val(OldTitle);
+                UI.setIsNew(subscr.isNewSubscription, true);
+                UI.setTitle(subscr.title);
                 
-                if (result.isNewSubscription)
+                GoogleReader.getFolders(UI.errorHandler, function(folders)
                 {
-                    UI.setState('added');
-                    BackgroundPage.showPageAction(TabId, true);
-                }
-                else
-                {
-                    UI.setState('existing');
-                }
+                    UI.setFolders(folders);
+                    UI.setFeedFolders(subscr.categories);
+                });
             });
         });
         

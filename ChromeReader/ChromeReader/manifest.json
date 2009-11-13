@@ -10,7 +10,7 @@
 	
 	"content_scripts":
 	[
-		{ "matches": [ "http://*/*" ], "js": [ "feed_finder.js" ] }
+		{ "matches": [ "http://*/*" ], "js": [ "content_script.js" ] }
 	],
 	
 	"page_action":
