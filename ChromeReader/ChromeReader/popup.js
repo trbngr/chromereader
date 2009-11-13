@@ -1,124 +1,127 @@
 /// <reference path="../jquery-1.3.2.js" />
 
 var Feeds;
-var GoogleReader;
 var OldTitle;
 
-function closePopup()
-{
-    if (chrome.experimental && 
-        chrome.experimental.extension && 
-        chrome.experimental.extension.getPopupView)
-    {
-        GoogleReader._log(chrome.experimental.extension.getPopupView());
-        chrome.experimental.extension.getPopupView().close();
-    }
-    else
-    {
-        window.close();
-    }
-}
+var BackgroundPage;
+var GoogleReader;
+var TabPort;
+var TabId;
 
-function showError(error)
+var UI = 
 {
-    $('#failed').text(error);
-    $('#failed').show();
-}
+    connecting: $('#connecting'),
+    connected:  $('#connected'),
+    failed:     $('#failed'),
+    
+    added:      $('#added'),
+    removed:    $('#removed'),
+    existing:   $('#existing'),
+    
+    close: $('#close'),
+    remove: $('#remove'),
+    feedName: $('#feedName'),
+    
+    setState: function(state)
+    {
+        function setVisibility(obj, value)
+        {
+            if (value)
+            {
+                obj.removeClass('hidden');
+            }
+            else
+            {
+                obj.addClass('hidden');
+            }
+        }
+        
+        setVisibility(this.connecting, (state == 'connecting'));
+        setVisibility(this.connected,  ((state == 'added') || (state == 'existing')));
+        setVisibility(this.failed,     (state == 'failed'));
+        
+        setVisibility(this.added,      (state == 'added'));
+        setVisibility(this.removed,    (state == 'removed'));
+        setVisibility(this.existing,   (state == 'existing'));
+    },
+    
+    errorHandler: function(xhr, status, errorThrown)
+    {
+        this.failed.text(status);
+        this.setState('failed');
+    }
+};
 
 function unsubscribeFeed()
 {
     if (Feeds && GoogleReader)
     {
-        GoogleReader.unsubscribe(Feeds[0], function(result, status)
+        GoogleReader.unsubscribe(Feeds[0], UI.errorHandler, function(result, status)
         {
-            if (status == 'success')
-            {
-                closePopup();
-            }
-            else
-            {
-                showError(status);
-            }
+            BackgroundPage.showPageAction(TabId, false);
+            
+            UI.setState('removed');
+            UI.closePopup();
         })
     }
 }
 
 function updateFeedTitle()
 {
-    var newTitle = $('#feedName').val();
+    var newTitle = UI.feedName.val();
     
     if ((GoogleReader) && (Feeds) && (OldTitle != newTitle))
     {
-        GoogleReader.setTitle(Feeds[0], newTitle, function(result, status)
+        GoogleReader.setTitle(Feeds[0], newTitle, UI.errorHandler, function(result, status)
         {
             OldTitle = newTitle;
-        
-            if (status != 'success')
-            {
-                showError(status);
-            }
-            else if (result != 'OK')
-            {
-                showError(result);
-            }
         });
     }
 }
 
-$('#close').click(closePopup);
-$('#remove').click(unsubscribeFeed);
-
-$('#feedName').blur(updateFeedTitle);
-
-$(document).ready(function()
+window.onunload = function()
 {
-    $('#feedName').focus();
-});
+    updateFeedTitle();
+};
 
-if (chrome.experimental &&
-    chrome.experimental.popup &&
-    chrome.experimental.popup.onClosed)
+window.onload = function()
 {
-    chrome.experimental.popup.onClosed.addListener(updateFeedTitle);
-}
-
-chrome.tabs.getSelected(null, function(tab) 
-{
-    var port = chrome.tabs.connect(tab.id);
+    // add event listeners
+    UI.close.click(window.close);
+    UI.remove.click(unsubscribeFeed);
+    UI.feedName.blur(updateFeedTitle);
     
-    port.onMessage.addListener(function(feeds)
-    {
-        var background = chrome.extension.getBackgroundPage();
+    UI.feedName.focus();
 
-        Feeds = feeds;
-        GoogleReader = background.createReader();        
+    chrome.tabs.getSelected(null, function(tab) 
+    {
+        TabId = tab.id;
+        TabPort = chrome.tabs.connect(TabId);
         
-        GoogleReader.ensureSubscribed(Feeds[0], function(result, status)
+        TabPort.onMessage.addListener(function(feeds)
         {
-            $('#connecting').hide();
+            Feeds = feeds;
+
+            BackgroundPage = chrome.extension.getBackgroundPage();
+            GoogleReader = BackgroundPage.createReader();        
             
-            if (status != 'success')
-            {
-                showError(status);
-            }
-            else
+            GoogleReader.ensureSubscribed(Feeds[0], UI.errorHandler, function(result, status)
             {
                 OldTitle = result.title;
-                
-                $('#connected').show();
-                $('#feedName').val(OldTitle);
+                UI.feedName.val(OldTitle);
                 
                 if (result.isNewSubscription)
                 {
-                    $('#added').show();
+                    UI.setState('added');
+                    BackgroundPage.showPageAction(TabId, true);
                 }
                 else
                 {
-                    $('#existing').show();
+                    UI.setState('existing');
                 }
-            }
+            });
         });
-    });
-    
-    port.postMessage('GetFeeds');
-})
+        
+        TabPort.postMessage('GetFeeds');
+    })
+};

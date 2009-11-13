@@ -21,149 +21,164 @@ GoogleReaderClient.prototype._makeFeedId = function(url)
     return 'feed/' + url;
 };
 
-GoogleReaderClient.prototype._get = function(url, callback, data, type)
+GoogleReaderClient.prototype._get = function(options)
 {
-    $.get(this._makeUrl(url), data, callback, type || 'json');
+    var self = this;
+
+    options.type = 'GET';
+    options.url = self._makeUrl(options.url);
+    options.dataType = options.dataType || 'json';
+    
+    $.ajax(options);
 };
 
-GoogleReaderClient.prototype._getToken = function(callback)
+GoogleReaderClient.prototype._getToken = function(options, sync)
 {
     var self = this;
 
     if (self._token)
     {
-        callback(this._token);
+        options.success(self._token, 'success');
     }
     else
     {
-        self._get('token', function(result, status)
+        self._get(
         {
-            if (status == 'success')
+            url: 'token',
+            async: !sync,
+            dataType: 'text',
+            error: options.error,
+            success: function(result, status)
             {
                 self._token = result;
-                callback(self._token);
+                options.success(result, status);
             }
-            else
-            {
-                self._log('Failed to get token: ' + status);
-            }
-        }, { }, 'text');
+        });
     }
 };
 
-GoogleReaderClient.prototype._post = function(url, callback, data)
+GoogleReaderClient.prototype._post = function(options, sync)
 {
     var self = this;
 
-    data = data || { };
-    url = self._makeUrl(url);
-    
-    self._getToken(function(token)
+    self._getToken(
     {
-        data['T'] = token;
-        $.post(url, data, callback);
-    });
+        success: function(token, status)
+        {
+            options.type = 'POST';
+            options.async = !sync;
+            options.dataType = 'text';
+            options.url = self._makeUrl(options.url);
+            
+            options.data = options.data || { };            
+            options.data['T'] = token;
+            
+            $.ajax(options);
+        },
+        error: options.error
+    }, sync);
 };
 
-GoogleReaderClient.prototype.subscribe = function(feed, callback)
+GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data, sync)
 {
-    this._post('subscription/edit', callback,
+    data.s = this._makeFeedId(feed);
+
+    this._post(
     {
-        s: this._makeFeedId(feed), 
+        url: 'subscription/edit',
+        success: success,
+        error: error,
+        data: data
+    }, sync);
+};
+
+GoogleReaderClient.prototype.subscribe = function(feed, error, success)
+{
+    this._editSubscription(feed, error, success,
+    {
         ac: 'subscribe'
     });
 };
 
-GoogleReaderClient.prototype.unsubscribe = function(feed, callback)
+GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
 {
-    this._post('subscription/edit', callback,
+    this._editSubscription(feed, error, success,
     {
-        s: this._makeFeedId(feed), 
         ac: 'unsubscribe'
     });
 };
-GoogleReaderClient.prototype.setTitle = function(feed, title, callback)
+
+GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
 {
-    this._post('subscription/edit', callback,
+    console.log('setTitle - feed: ' + feed + ' title: ' + title);
+    
+    this._editSubscription(feed, error, success,
     {
-        s: this._makeFeedId(feed), 
-        ac: 'edit',
-        t: title
+        ac: 'edit', t: title
+    }, /* sync: */ true );
+};
+
+GoogleReaderClient.prototype.getSubscriptions = function(error, success)
+{
+    this._get(
+    {
+        url: 'subscription/list',
+        success: success,
+        error: error,
+        data:
+        {
+            output: 'json'
+        }
     });
 };
 
-GoogleReaderClient.prototype.getSubscriptions = function(callback)
-{
-    this._get('subscription/list', callback,
-    {
-        output: 'json'
-    });
-};
-
-GoogleReaderClient.prototype.getSubscription = function(feed, callback)
+GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
 {
     var self = this;
-    
-    this.getSubscriptions(function(result, status)
+    self.getSubscriptions(error, function(result, status)
     {
-        if (status == 'success')
+        var i;
+        var feedid = self._makeFeedId(feed);
+        
+        for (i in result.subscriptions)
         {
-            var i;
-            var feedid = self._makeFeedId(feed);
+            var subscr = result.subscriptions[i];
             
-            for (i in result.subscriptions)
+            if (subscr.id == feedid)
             {
-                var subscr = result.subscriptions[i];
-                
-                if (subscr.id == feedid)
-                {
-                    callback(subscr, status);
-                    return;
-                }
+                success(subscr, status);
+                return;
             }
         }
         
-        callback(null, status);
+        success(null, status);
     });
 };
 
-GoogleReaderClient.prototype.ensureSubscribed = function(feed, callback)
+GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
 {
     var self = this;
     
-    self.getSubscription(feed, function(sub, status)
+    self.getSubscription(feed, error, function(sub, status)
     {
-        if (status != 'success')
-        {
-            callback(null, status);
-            return;
-        }
-        
         if (sub)
         {
             sub.isNewSubscription = false;
-            callback(sub, status);
+            success(sub, status);
         }
         else
         {
-            self.subscribe(feed, function(result, status)
+            self.subscribe(feed, error, function(result, status)
             {
-                if (status == 'success')
+                self.getSubscription(feed, error, function(sub, status)
                 {
-                    self.getSubscription(feed, function(sub, status)
+                    if (sub)
                     {
-                        if (sub)
-                        {
-                            sub.isNewSubscription = true;
-                        }
-                        
-                        callback(sub, status);
-                    });
-                }
-                else
-                {
-                    callback(null, status);
-                }
+                        sub.isNewSubscription = true;
+                    }
+                    
+                    success(sub, status);
+                });
             });
         }            
     });

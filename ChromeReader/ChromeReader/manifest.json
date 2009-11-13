@@ -3,8 +3,7 @@
 	"version": "0.1",
 	"icons": 
 	{ 
-		"48": "icons/logo-48.png",
-		"64": "icons/logo-64.png" 
+		"48": "icons/logo.png"
 	},
 	
 	"background_page": "background.html",
@@ -19,7 +18,6 @@
 	
 	"page_action":
 	{
-		"default_icon": "icons/page_action.png",
 		"popup": "popup.html",
 		"type": "tab"
 	},
