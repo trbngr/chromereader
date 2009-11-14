@@ -33,9 +33,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8586FE15-78F3-44
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_locales", "_locales", "{7CFE761E-737D-4B50-9F58-674A6DAC3142}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "en_US", "en_US", "{BD19B664-68BF-4721-81CC-98DE930EEF6D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "en", "en", "{BD19B664-68BF-4721-81CC-98DE930EEF6D}"
 	ProjectSection(SolutionItems) = preProject
-		_locales\en_US\messages.json = _locales\en_US\messages.json
+		_locales\en\messages.json = _locales\en\messages.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cs", "cs", "{DB6C7E8A-323E-4F45-AD22-05C3448B6E0D}"

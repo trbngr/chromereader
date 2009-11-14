@@ -22,7 +22,7 @@
 		"type": "tab"
 	},
 	
-	"default_locale": "en_US",
+	"default_locale": "en",
 	"permissions": [ "tabs", "http://www.google.com/reader/*" ],
 	"update_url": "http://chromereader.googlecode.com/svn/update/updates.xml"
 }
