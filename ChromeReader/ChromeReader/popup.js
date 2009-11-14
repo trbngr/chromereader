@@ -11,19 +11,21 @@ var UI =
 {
     oldTitle: null,
 
-    connecting: $('#connecting'),
-    connected:  $('#connected'),
-    failed:     $('#failed'),
+    unauthorized: $('#unauthorized'),
+    connecting:   $('#connecting'),
+    connected:    $('#connected'),
+    failed:       $('#failed'),
     
-    added:      $('#added'),
-    removed:    $('#removed'),
-    existing:   $('#existing'),
+    added:    $('#added'),
+    removed:  $('#removed'),
+    existing: $('#existing'),
     
-    remove: $('#remove'),
-    folders: $('#folders'),
+    signin:   $('#signin'),
+    remove:   $('#remove'),
+    folders:  $('#folders'),
     feedName: $('#feedName'),
     
-    nameRow: $('#nameRow'),
+    nameRow:   $('#nameRow'),
     foldersRow: $('#foldersRow'),
     
     folderChecks: function()
@@ -33,7 +35,7 @@ var UI =
     
     setIsNew: function(isNew, isSubscribed)
     {
-        BackgroundPage.showPageAction(TabId, isSubscribed);
+        BackgroundPage.showPageAction(TabId, isSubscribed ? 'subscribed' : null);
         
         if (isSubscribed)
         {
@@ -107,38 +109,45 @@ var UI =
         
     setState: function(state)
     {
-        this.setIsVisible(this.connecting, (state == 'connecting'));
-        this.setIsVisible(this.connected,  ((state == 'added') || (state == 'existing')));
-        this.setIsVisible(this.failed,     (state == 'failed'));
+        this.setIsVisible(this.unauthorized, (state == 'unauthorized'));
+        this.setIsVisible(this.connecting,   (state == 'connecting'));
+        this.setIsVisible(this.connected,    ((state == 'added') || (state == 'existing')));
+        this.setIsVisible(this.failed,       (state == 'failed'));
         
-        this.setIsVisible(this.added,      (state == 'added'));
-        this.setIsVisible(this.removed,    (state == 'removed'));
-        this.setIsVisible(this.existing,   (state == 'existing'));
+        this.setIsVisible(this.added,    (state == 'added'));
+        this.setIsVisible(this.removed,  (state == 'removed'));
+        this.setIsVisible(this.existing, (state == 'existing'));
     },
     
     setTitle: function(title)
     {
         this.oldTitle = title;
         this.feedName.val(title);
-    },
-
-    errorHandler: function(xhr, status, errorThrown)
-    {
-        this.failed.text(status);
-        this.setState('failed');
     }
 };
 
+function errorHandler(xhr, status, exc)
+{
+    if (BackgroundPage.isUnauthorizedStatus(xhr.status))
+    {
+        UI.setState('unauthorized');
+    }
+    else
+    {
+        UI.failed.text(xhr.statusText);
+        UI.setState('failed');
+        
+        BackgroundPage.showPageAction(TabId, 'failed');
+    }
+}
+
 function unsubscribeFeed()
 {
-    if (Feeds && GoogleReader)
+    GoogleReader.unsubscribe(Feeds[0], errorHandler, function(result)
     {
-        GoogleReader.unsubscribe(Feeds[0], UI.errorHandler, function(result)
-        {
-            UI.setIsNew(false, false);
-            window.close();
-        })
-    }
+        UI.setIsNew(false, false);
+        window.close();
+    })
 }
 
 function updateFeedTitle()
@@ -148,7 +157,7 @@ function updateFeedTitle()
     
     if (oldTitle != newTitle)
     {
-        GoogleReader.setTitle(Feeds[0], newTitle, UI.errorHandler, function(result, status)
+        GoogleReader.setTitle(Feeds[0], newTitle, errorHandler, function(result, status)
         {
             UI.oldTitle = newTitle;
         });
@@ -159,12 +168,17 @@ function updateFeedFolder()
 {
     if (this.checked)
     {
-        GoogleReader.addSubscriptionFolder(Feeds[0], this.value, UI.errorHandler);
+        GoogleReader.addSubscriptionFolder(Feeds[0], this.value, errorHandler);
     }
     else
     {
-        GoogleReader.removeSubscriptionFolder(Feeds[0], this.value, UI.errorHandler);
+        GoogleReader.removeSubscriptionFolder(Feeds[0], this.value, errorHandler);
     }
+}
+
+function openSignInPage()
+{
+    BackgroundPage.openSignInPage();
 }
 
 window.onunload = function()
@@ -176,9 +190,10 @@ window.onload = function()
 {
     BackgroundPage = chrome.extension.getBackgroundPage();
     GoogleReader = BackgroundPage.googleReader;
-
+    
     // add event listeners
-    UI.remove.click(unsubscribeFeed);    
+    UI.signin.click(openSignInPage);
+    UI.remove.click(unsubscribeFeed);
     UI.feedName.blur(updateFeedTitle);
     
     UI.feedName.focus();
@@ -192,12 +207,12 @@ window.onload = function()
         {
             Feeds = feeds;
                         
-            GoogleReader.ensureSubscribed(Feeds[0], UI.errorHandler, function(subscr)
+            GoogleReader.ensureSubscribed(Feeds[0], errorHandler, function(subscr)
             {
                 UI.setIsNew(subscr.isNewSubscription, true);
                 UI.setTitle(subscr.title);
                 
-                GoogleReader.getFolders(UI.errorHandler, function(folders)
+                GoogleReader.getFolders(errorHandler, function(folders)
                 {
                     UI.setFolders(folders);
                     UI.setFeedFolders(subscr.categories);

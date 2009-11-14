@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{B95687EC-7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{1C785CCD-E861-41D0-A6C9-B06156CD23E2}"
 	ProjectSection(SolutionItems) = preProject
+		ChromeReader\common.css = ChromeReader\common.css
 		ChromeReader\popup.css = ChromeReader\popup.css
 	EndProjectSection
 EndProject

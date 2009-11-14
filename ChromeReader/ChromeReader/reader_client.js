@@ -50,7 +50,36 @@ function GoogleReaderClient()
 
 GoogleReaderClient.prototype._log = function(msg)
 {
-    console.log(msg);
+    var curr  = arguments.callee.caller, 
+        FUNC  = 'function', ANON = "{anonymous}", 
+        fnRE  = /function\s*([\w\-$]+)?\s*\(/i, 
+        stack = [],j=0, 
+        fn,args,i; 
+
+    while (curr)
+    { 
+        fn    = fnRE.test(curr.toString()) ? RegExp.$1 || ANON : ANON; 
+        args  = stack.slice.call(curr.arguments); 
+        i     = args.length; 
+
+        while (i--) 
+        { 
+            switch (typeof args[i]) 
+            { 
+                case 'string'  : args[i] = '"'+args[i].replace(/"/g,'\\"')+'"'; break; 
+                case 'function': args[i] = FUNC; break; 
+            } 
+        } 
+
+        stack[j++] = fn + '(' + args.join() + ')'; 
+        curr = curr.caller; 
+    } 
+
+    console.log(
+    {
+        stack: stack,
+        data: msg
+    });
 };
 
 GoogleReaderClient.prototype._makeUrl = function(part)
@@ -79,6 +108,7 @@ GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
                 if ((pieces[2] == 'label') && (pieces[3] == folder))
                 {
                     success(tag.id);
+                    break;
                 }
             }
         }
@@ -227,8 +257,8 @@ GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
 GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
 {
     var self = this;
-    
-    self.getSubscription(feed, error, function(sub, status)
+        
+    self.getSubscription(feed, error, function(sub)
     {
         if (sub)
         {
@@ -237,9 +267,9 @@ GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
         }
         else
         {
-            self.subscribe(feed, error, function(result, status)
+            self.subscribe(feed, error, function(result)
             {
-                self.getSubscription(feed, error, function(sub, status)
+                self.getSubscription(feed, error, function(sub)
                 {
                     if (sub)
                     {

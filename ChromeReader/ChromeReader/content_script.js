@@ -1,30 +1,33 @@
 var Feeds = [];
+var FeedsLoaded = false;
 
 function findFeeds() 
 {
-    var result = document.evaluate(
-        '//link[@rel="alternate"][' +
-        'contains(@type, "rss") or ' +
-        'contains(@type, "atom") or ' +
-        'contains(@type, "rdf")]',
-        document, null, 0, null);
-
-    var item;
+    if (!FeedsLoaded)
+    {
+        FeedsLoaded = true;
     
-    Feeds = [];
-
-    while (item = result.iterateNext())
-    {
-        Feeds.push(item.href);
-    }
-
-    if (Feeds.length > 0)
-    {
-        chrome.extension.connect().postMessage(
+        var item;
+        var result = document.evaluate(
+            '//link[@rel="alternate"][' +
+            'contains(@type, "rss") or ' +
+            'contains(@type, "atom") or ' +
+            'contains(@type, "rdf")]',
+            document, null, 0, null);
+        
+        while (item = result.iterateNext())
         {
-            action: 'FeedsDiscovered',
-            data: Feeds
-        });
+            Feeds.push(item.href);
+        }
+
+        if (Feeds.length > 0)
+        {
+            chrome.extension.connect().postMessage(
+            {
+                action: 'FeedsDiscovered',
+                data: Feeds
+            });
+        }
     }
 }
 
