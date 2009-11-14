@@ -36,6 +36,11 @@ h1
     border: solid 1px ThreeDShadow;
 }
 
+#folders label
+{
+    color: MenuText;
+}
+
 .row 
 {
     clear: both;

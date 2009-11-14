@@ -19,7 +19,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{B95687EC-7E4E-477F-848C-0DD66F88192D}"
 	ProjectSection(SolutionItems) = preProject
 		ChromeReader\background.html = ChromeReader\background.html
-		ChromeReader\edit_dialog.html = ChromeReader\edit_dialog.html
 		ChromeReader\popup.html = ChromeReader\popup.html
 	EndProjectSection
 EndProject
