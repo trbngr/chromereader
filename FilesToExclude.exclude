@@ -1,0 +1,6 @@
+.exclude
+.pem
+.ps1
+.sln
+.suo
+.svn
