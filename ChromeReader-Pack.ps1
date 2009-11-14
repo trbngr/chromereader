@@ -13,7 +13,7 @@ try
     	Remove-Item ..\tmp -Force -Recurse
     }
 
-    xcopy . ..\tmp /s /e /i /exclude:FilesToExclude.exclude
+    xcopy . ..\tmp /s /e /i /exclude:ChromeReader.exclude
 
     $ExtDir = (Resolve-Path ..\tmp).Path
     $ExtPem = (Resolve-Path .\ChromeReader.pem).Path

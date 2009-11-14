@@ -43,6 +43,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cs", "cs", "{DB6C7E8A-323E-
 		_locales\cs\messages.json = _locales\cs\messages.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_private", "_private", "{050E5451-6CC3-4CDC-9F63-5E483FD95265}"
+	ProjectSection(SolutionItems) = preProject
+		ChromeReader-Pack.ps1 = ChromeReader-Pack.ps1
+		ChromeReader.exclude = ChromeReader.exclude
+		ChromeReader.pem = ChromeReader.pem
+		ChromeReader.psd = ChromeReader.psd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

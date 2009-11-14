@@ -1,6 +1,7 @@
 .exclude
 .pem
 .ps1
+.psd
 .sln
 .suo
 .svn
