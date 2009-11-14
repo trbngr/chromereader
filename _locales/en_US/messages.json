@@ -1,0 +1,78 @@
+﻿{
+	"page_action_title":
+	{
+		"message": "Subscribe page feed"
+	},
+
+	"page_action_title_subscribed":
+	{
+		"message": "Edit page feed subscribtion"
+	},
+	
+	"page_action_title_unauthorized":
+	{
+		"message": "Please sign in to Google Reader"
+	},
+
+	"page_action_title_failed":
+	{
+		"message": "Google Reader not available"
+	},
+	
+	"popup_connecting": 
+	{
+		"message": "Connecting to Google Reader..."
+	},
+	
+	"popup_signin_prefix":
+	{
+		"message": "Please "
+	},
+
+	"popup_signin":
+	{
+		"message": "sign in"
+	},
+	
+	"popup_signin_suffix":
+	{
+		"message": " to Google Reader."
+	},
+	
+	"popup_remove":
+	{
+		"message": "Remove"
+	},
+	
+	"popup_subscription":
+	{
+		"message": "Subscription"
+	},
+	
+	"popup_subscription_added":
+	{
+		"message": "Subscription Added!"
+	},
+	
+	"popup_subscription_removed":
+	{
+		"message": "Subscription Removed!"
+	},
+	
+	"popup_feed_name":
+	{
+		"message": "Name:"
+	},
+	
+	"popup_feed_folders":
+	{
+		"message": "Folders:"
+	}
+}
+
+/*
+	"":
+	{
+		"message": ""
+	},
+*/

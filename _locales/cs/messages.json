@@ -1,0 +1,71 @@
+﻿{
+	"page_action_title":
+	{
+		"message": "Přihlásit odběr"
+	},
+
+	"page_action_title_subscribed":
+	{
+		"message": "Upravit odběr"
+	},
+	
+	"page_action_title_unauthorized":
+	{
+		"message": "Prosím přihlašte se do služby Google Reader."
+	},
+
+	"page_action_title_failed":
+	{
+		"message": "Služba Google Reader není k dispozici"
+	},
+	
+	"popup_connecting": 
+	{
+		"message": "Probíhá přihlašování..."
+	},
+	
+	"popup_signin_prefix":
+	{
+		"message": "Prosím "
+	},
+
+	"popup_signin":
+	{
+		"message": "přihlašte se"
+	},
+	
+	"popup_signin_suffix":
+	{
+		"message": " do služby Google Reader."
+	},
+	
+	"popup_remove":
+	{
+		"message": "Odstranit"
+	},
+	
+	"popup_subscription":
+	{
+		"message": "Odběr"
+	},
+	
+	"popup_subscription_added":
+	{
+		"message": "Odběr přihlášen!"
+	},
+	
+	"popup_subscription_removed":
+	{
+		"message": "Odběr odstraněn!"
+	},
+	
+	"popup_feed_name":
+	{
+		"message": "Jméno:"
+	},
+	
+	"popup_feed_folders":
+	{
+		"message": "Složky:"
+	}
+}

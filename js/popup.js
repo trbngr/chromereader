@@ -1,4 +1,4 @@
-// <reference path="../jquery-1.3.2.js" />
+// <reference path="..\..\jquery-1.3.2.js" />
 
 var Feeds;
 
@@ -123,6 +123,22 @@ var UI =
     {
         this.oldTitle = title;
         this.feedName.val(title);
+    },
+    
+    localize: function()
+    {
+        var rx = /\[(.*)\]/;
+        
+        $('.i18n').each(function(i)
+        {
+            var el = $(this);
+            var match = rx.exec(el.text());
+            
+            if (match && match[1])
+            {
+                el.text(chrome.i18n.getMessage(match[1]));
+            }
+        });
     }
 };
 
@@ -131,6 +147,7 @@ function errorHandler(xhr, status, exc)
     if (BackgroundPage.isUnauthorizedStatus(xhr.status))
     {
         UI.setState('unauthorized');
+        BackgroundPage.showPageAction(TabId, 'unauthorized');
     }
     else
     {
@@ -188,6 +205,8 @@ window.onunload = function()
 
 window.onload = function()
 {
+    UI.localize();
+    
     BackgroundPage = chrome.extension.getBackgroundPage();
     GoogleReader = BackgroundPage.googleReader;
     

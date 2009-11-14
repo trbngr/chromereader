@@ -1,30 +1,47 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "manifest", "manifest", "{C9735C9D-9E13-4981-8E9A-3CACC068DA15}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{D2BEC3DE-18B6-420B-9943-F654BE05DB6E}"
 	ProjectSection(SolutionItems) = preProject
-		ChromeReader_update\updates.xml = ChromeReader_update\updates.xml
+		css\common.css = css\common.css
+		css\popup.css = css\popup.css
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{2BE3463D-A91F-4B01-A9E4-C3F1D5A5243C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{C2940F8B-2A09-47D8-94C4-953B7AAD614C}"
 	ProjectSection(SolutionItems) = preProject
-		ChromeReader\background.js = ChromeReader\background.js
-		ChromeReader\content_script.js = ChromeReader\content_script.js
-		ChromeReader\object_cache.js = ChromeReader\object_cache.js
-		ChromeReader\popup.js = ChromeReader\popup.js
-		ChromeReader\reader_client.js = ChromeReader\reader_client.js
+		js\background.js = js\background.js
+		js\content_script.js = js\content_script.js
+		js\object_cache.js = js\object_cache.js
+		js\popup.js = js\popup.js
+		js\reader_client.js = js\reader_client.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{B95687EC-7E4E-477F-848C-0DD66F88192D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "png", "png", "{0F9CA945-ABC8-4B9C-B445-DED71869A9A5}"
 	ProjectSection(SolutionItems) = preProject
-		ChromeReader\background.html = ChromeReader\background.html
+		png\logo.png = png\logo.png
+		png\page_action.png = png\page_action.png
+		png\page_action_error.png = png\page_action_error.png
+		png\page_action_subscribed.png = png\page_action_subscribed.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{1C785CCD-E861-41D0-A6C9-B06156CD23E2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8586FE15-78F3-4407-92BB-8256C75553AF}"
+	ProjectSection(SolutionItems) = preProject
+		background.html = background.html
+		manifest.json = manifest.json
+		popup.html = popup.html
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".graphics", ".graphics", "{E00A86A5-B356-4D30-8096-B3BE4C47490B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_locales", "_locales", "{7CFE761E-737D-4B50-9F58-674A6DAC3142}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "icons", "icons", "{C29B60F8-0C0B-4250-9F51-951766A49FD1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "en_US", "en_US", "{BD19B664-68BF-4721-81CC-98DE930EEF6D}"
+	ProjectSection(SolutionItems) = preProject
+		_locales\en_US\messages.json = _locales\en_US\messages.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cs", "cs", "{DB6C7E8A-323E-4F45-AD22-05C3448B6E0D}"
+	ProjectSection(SolutionItems) = preProject
+		_locales\cs\messages.json = _locales\cs\messages.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -33,5 +50,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BD19B664-68BF-4721-81CC-98DE930EEF6D} = {7CFE761E-737D-4B50-9F58-674A6DAC3142}
+		{DB6C7E8A-323E-4F45-AD22-05C3448B6E0D} = {7CFE761E-737D-4B50-9F58-674A6DAC3142}
 	EndGlobalSection
 EndGlobal
