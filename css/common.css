@@ -1,0 +1,19 @@
+body
+{
+    min-width: 17em;
+    margin: 0.3em;
+    
+    cursor:default;
+    -webkit-user-select:none;
+}
+
+body, input
+{
+    font: menu;
+}
+
+h1 
+{
+    font-size: 120%;
+    font-weight: normal;
+}

@@ -1,0 +1,42 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="common.css" />
+    <link type="text/css" rel="stylesheet" href="popup.css" />
+</head>
+<body>
+    <div id="connecting">Connecting to Google Reader...</div>
+    
+    <div id="failed" class="hidden">
+    </div>
+    
+    <div id="unauthorized" class="hidden">
+        Please <a href="#" id="signin">sign in</a> to Google Reader.
+    </div>
+
+    <div id="connected" class="hidden">
+        <a id="remove" href="#">Remove</a>
+
+        <h1 id="added" class="hidden">Subscription Added!</h1>
+        <h1 id="existing" class="hidden">Subscription</h1>
+        
+        <div class="row" id="nameRow">
+            <label for="feedName">Name:</label>
+            <div class="input">
+                <input type="text" id="feedName" />
+            </div>
+        </div>
+
+        <div class="row hidden" id="foldersRow">
+            <label for="folders">Folders:</label>
+            <div class="input">
+                <ul id="folders">
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <h1 id="removed" class="hidden">Subscription Removed!</h1>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
+</body>

@@ -1,0 +1,52 @@
+#remove
+{
+    width: 6em;
+    float: right; 
+    text-align: right;
+    padding: 0.2em 0 0 0;
+}
+
+#folders
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    height: 4em;
+    border: solid 1px ThreeDShadow;
+}
+
+#folders label
+{
+    color: MenuText;
+}
+
+.row 
+{
+    clear: both;
+    margin: 0.25em 0 0 0;
+}
+
+.row > label
+{
+    width: 3.5em;
+    float: left;
+    padding: 0.1em 0;
+    margin: 0;
+}
+
+.row > .input
+{
+    margin: 0 0 0 3.75em;
+}
+
+.row > .input > input 
+{ 
+    width: 100%; 
+    margin: 0;
+}
+
+.hidden 
+{ 
+    display: none; 
+}

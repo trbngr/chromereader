@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "manifest", "manifest", "{C9735C9D-9E13-4981-8E9A-3CACC068DA15}"
+	ProjectSection(SolutionItems) = preProject
+		ChromeReader_update\updates.xml = ChromeReader_update\updates.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{2BE3463D-A91F-4B01-A9E4-C3F1D5A5243C}"
+	ProjectSection(SolutionItems) = preProject
+		ChromeReader\background.js = ChromeReader\background.js
+		ChromeReader\content_script.js = ChromeReader\content_script.js
+		ChromeReader\object_cache.js = ChromeReader\object_cache.js
+		ChromeReader\popup.js = ChromeReader\popup.js
+		ChromeReader\reader_client.js = ChromeReader\reader_client.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{B95687EC-7E4E-477F-848C-0DD66F88192D}"
+	ProjectSection(SolutionItems) = preProject
+		ChromeReader\background.html = ChromeReader\background.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{1C785CCD-E861-41D0-A6C9-B06156CD23E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".graphics", ".graphics", "{E00A86A5-B356-4D30-8096-B3BE4C47490B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "icons", "icons", "{C29B60F8-0C0B-4250-9F51-951766A49FD1}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
