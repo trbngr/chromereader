@@ -1,11 +1,10 @@
 // <reference path="..\..\jquery-1.3.2.js" />
 
 var Feeds;
-
-var BackgroundPage;
-var GoogleReader;
 var TabPort;
 var TabId;
+
+var chromeReader;
 
 var UI = 
 {
@@ -35,7 +34,7 @@ var UI =
     
     setIsNew: function(isNew, isSubscribed)
     {
-        BackgroundPage.showPageAction(TabId, isSubscribed ? 'subscribed' : null);
+        chromeReader.showPageAction(TabId, isSubscribed ? 'subscribed' : null);
         
         if (isSubscribed)
         {
@@ -136,7 +135,7 @@ var UI =
             
             if (key)
             {
-                el.text(BackgroundPage.localize(key, el.text()));
+                el.text(chromeReader.localize(key, el.text()));
             }
         });
     }
@@ -144,23 +143,23 @@ var UI =
 
 function errorHandler(xhr, status, exc)
 {
-    if (BackgroundPage.isUnauthorizedStatus(xhr.status))
+    if (chromeReader.isUnauthorizedStatus(xhr.status))
     {
         UI.setState('unauthorized');
-        BackgroundPage.showPageAction(TabId, 'unauthorized');
+        chromeReader.showPageAction(TabId, 'unauthorized');
     }
     else
     {
         UI.failed.text(xhr.statusText);
         UI.setState('failed');
         
-        BackgroundPage.showPageAction(TabId, 'failed');
+        chromeReader.showPageAction(TabId, 'failed');
     }
 }
 
 function unsubscribeFeed()
 {
-    GoogleReader.unsubscribe(Feeds[0], errorHandler, function(result)
+    chromeReader.client.unsubscribe(Feeds[0], errorHandler, function(result)
     {
         UI.setIsNew(false, false);
         window.close();
@@ -174,7 +173,7 @@ function updateFeedTitle()
     
     if (oldTitle != newTitle)
     {
-        GoogleReader.setTitle(Feeds[0], newTitle, errorHandler, function(result, status)
+        chromeReader.client.setTitle(Feeds[0], newTitle, errorHandler, function(result, status)
         {
             UI.oldTitle = newTitle;
         });
@@ -185,17 +184,17 @@ function updateFeedFolder()
 {
     if (this.checked)
     {
-        GoogleReader.addSubscriptionFolder(Feeds[0], this.value, errorHandler);
+        chromeReader.client.addSubscriptionFolder(Feeds[0], this.value, errorHandler);
     }
     else
     {
-        GoogleReader.removeSubscriptionFolder(Feeds[0], this.value, errorHandler);
+        chromeReader.client.removeSubscriptionFolder(Feeds[0], this.value, errorHandler);
     }
 }
 
 function openSignInPage()
 {
-    BackgroundPage.openSignInPage();
+    chromeReader.openSignInPage();
 }
 
 window.onunload = function()
@@ -205,12 +204,9 @@ window.onunload = function()
 
 window.onload = function()
 {
-    BackgroundPage = chrome.extension.getBackgroundPage();
-    GoogleReader = BackgroundPage.googleReader;
+    chromeReader = chrome.extension.getBackgroundPage().jachymko.chromeReader;
 
-    try {    
     UI.localize();
-    } catch(e) { GoogleReader._log(e); }
     
     // add event listeners
     UI.signin.click(openSignInPage);
@@ -228,12 +224,12 @@ window.onload = function()
         {
             Feeds = feeds;
                         
-            GoogleReader.ensureSubscribed(Feeds[0], errorHandler, function(subscr)
+            chromeReader.client.ensureSubscribed(Feeds[0], errorHandler, function(subscr)
             {
                 UI.setIsNew(subscr.isNewSubscription, true);
                 UI.setTitle(subscr.title);
                 
-                GoogleReader.getFolders(errorHandler, function(folders)
+                chromeReader.client.getFolders(errorHandler, function(folders)
                 {
                     UI.setFolders(folders);
                     UI.setFeedFolders(subscr.categories);

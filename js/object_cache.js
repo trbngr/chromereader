@@ -1,4 +1,9 @@
-function ObjectCache(factory, maxAge)
+if (typeof(jachymko) == 'undefined')
+{
+    jachymko = { };
+}
+
+jachymko.ObjectCache = function(factory, maxAge)
 {
     this._acquired = null;
     
@@ -7,9 +12,9 @@ function ObjectCache(factory, maxAge)
     
     this._factory = factory;
     this._maxAge = maxAge || 60000;
-}
+};
 
-ObjectCache.prototype.age = function()
+jachymko.ObjectCache.prototype.age = function()
 {
     if (this._acquired)
     {
@@ -19,7 +24,7 @@ ObjectCache.prototype.age = function()
     return null;
 };
 
-ObjectCache.prototype.get = function(error, success)
+jachymko.ObjectCache.prototype.get = function(error, success)
 {
     var self = this;
     
@@ -40,7 +45,7 @@ ObjectCache.prototype.get = function(error, success)
     }
 };
 
-ObjectCache.prototype.invalidate = function()
+jachymko.ObjectCache.prototype.invalidate = function()
 {
     this._hasValue = false;
 };

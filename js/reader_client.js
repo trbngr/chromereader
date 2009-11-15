@@ -1,14 +1,19 @@
-/// <reference path="../jquery-1.3.2.js" />
+/// <reference path="..\..\jquery-1.3.2.js" />
 /// <reference path="object_cache.js" />
 
-function GoogleReaderClient()
+if (typeof(jachymko) == 'undefined')
+{
+    jachymko = { };
+}
+
+jachymko.GoogleReaderClient = function()
 {
     var self = this;
     
     self._url = 'http://www.google.com/reader/api/0/';
     self._client = 'ChromeReader'
     
-    self._tags = new ObjectCache(function(error, success)
+    self._tags = new jachymko.ObjectCache(function(error, success)
     {
         self._get(
         {
@@ -22,7 +27,7 @@ function GoogleReaderClient()
         });
     });
     
-    self._token = new ObjectCache(function(error, success)
+    self._token = new jachymko.ObjectCache(function(error, success)
     {
         self._get(
         {
@@ -33,7 +38,7 @@ function GoogleReaderClient()
         });
     });
     
-    self._subscriptions = new ObjectCache(function(error, success)
+    self._subscriptions = new jachymko.ObjectCache(function(error, success)
     {
         self._get(
         {
@@ -46,9 +51,9 @@ function GoogleReaderClient()
             }
         });    
     });
-}
+};
 
-GoogleReaderClient.prototype._log = function(msg)
+jachymko.GoogleReaderClient.prototype._log = function(msg)
 {
     var curr  = arguments.callee.caller, 
         FUNC  = 'function', ANON = "{anonymous}", 
@@ -82,17 +87,17 @@ GoogleReaderClient.prototype._log = function(msg)
     });
 };
 
-GoogleReaderClient.prototype._makeUrl = function(part)
+jachymko.GoogleReaderClient.prototype._makeUrl = function(part)
 {
     return this._url + part + '?client=' + this._client + '&ck=' + new Date().valueOf();
 };
 
-GoogleReaderClient.prototype._makeFeedId = function(url)
+jachymko.GoogleReaderClient.prototype._makeFeedId = function(url)
 {
     return 'feed/' + url;
 };
 
-GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
+jachymko.GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
 {
     var self = this;
     
@@ -115,7 +120,7 @@ GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
     });
 };
 
-GoogleReaderClient.prototype._get = function(options)
+jachymko.GoogleReaderClient.prototype._get = function(options)
 {
     var self = this;
 
@@ -126,7 +131,7 @@ GoogleReaderClient.prototype._get = function(options)
     $.ajax(options);
 };
 
-GoogleReaderClient.prototype._post = function(options)
+jachymko.GoogleReaderClient.prototype._post = function(options)
 {
     var self = this;
 
@@ -143,7 +148,7 @@ GoogleReaderClient.prototype._post = function(options)
     });
 };
 
-GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data)
+jachymko.GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data)
 {
     data.s = this._makeFeedId(feed);
 
@@ -157,7 +162,7 @@ GoogleReaderClient.prototype._editSubscription = function(feed, error, success, 
     });
 };
 
-GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
+jachymko.GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
 {
     var self = this;
     
@@ -170,7 +175,7 @@ GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, erro
     });
 };
 
-GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
+jachymko.GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
 {
     var self = this;
     
@@ -183,7 +188,7 @@ GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, e
     });
 };
 
-GoogleReaderClient.prototype.subscribe = function(feed, error, success)
+jachymko.GoogleReaderClient.prototype.subscribe = function(feed, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -191,7 +196,7 @@ GoogleReaderClient.prototype.subscribe = function(feed, error, success)
     });
 };
 
-GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
+jachymko.GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -199,7 +204,7 @@ GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
     });
 };
 
-GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
+jachymko.GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -207,7 +212,7 @@ GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
     });
 };
 
-GoogleReaderClient.prototype.getFolders = function(error, success)
+jachymko.GoogleReaderClient.prototype.getFolders = function(error, success)
 {
     var self = this;
     
@@ -231,7 +236,7 @@ GoogleReaderClient.prototype.getFolders = function(error, success)
     });
 };
 
-GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
+jachymko.GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
 {
     var self = this;
     
@@ -254,7 +259,7 @@ GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
     });
 };
 
-GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
+jachymko.GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
 {
     var self = this;
         

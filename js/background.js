@@ -1,59 +1,67 @@
 ﻿/// <reference path="reader_client.js" />
 
-window.googleReader = new GoogleReaderClient();
-
-window.localize = function(key, text)
+if (typeof(jachymko) == 'undefined')
 {
-    return chrome.i18n.getMessage(key) || (text);
-};
+    jachymko = { };
+}
 
-window.openSignInPage = function()
+jachymko.chromeReader = 
 {
-    chrome.tabs.create(
-    {
-        url: 'https://www.google.com/accounts/ServiceLogin?hl=en&nui=1&service=reader&continue=https://www.google.com/reader'
-    });
-};
-
-window.showPageAction = function(tabId, state)
-{
-    var icon = 'png/page_action.png';
-    var title = localize('page_action_title', 'Subscribe page feed');
+    client: new jachymko.GoogleReaderClient(),
     
-    if (state == 'subscribed')
+    localize: function(key, text)
     {
-        icon = 'png/page_action_subscribed.png';
-        title = localize('page_action_title_subscribed', 'Edit page feed subscribtion');
-    }
-    else if (state == 'unauthorized')
+        return chrome.i18n.getMessage(key) || (text);
+    },
+    
+    openSignInPage: function()
     {
-        icon = 'png/page_action_error.png';
-        title = localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
-    }
-    else if (state == 'failed')
+        chrome.tabs.create(
+        {
+            url: 'https://www.google.com/accounts/ServiceLogin?hl=en&nui=1&service=reader&continue=https://www.google.com/reader'
+        });
+    },
+    
+    showPageAction: function(tabId, state)
     {
-        icon = 'png/page_action_error.png';
-        title = localize('page_action_title_failed', 'Google Reader not available');
-    }
+        var icon = 'png/page_action.png';
+        var title = this.localize('page_action_title', 'Subscribe page feed');
         
-    chrome.pageAction.setIcon(
-    {
-        tabId: tabId,
-        path:  icon
-    });
+        if (state == 'subscribed')
+        {
+            icon = 'png/page_action_subscribed.png';
+            title = this.localize('page_action_title_subscribed', 'Edit page feed subscribtion');
+        }
+        else if (state == 'unauthorized')
+        {
+            icon = 'png/page_action_error.png';
+            title = this.localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
+        }
+        else if (state == 'failed')
+        {
+            icon = 'png/page_action_error.png';
+            title = this.localize('page_action_title_failed', 'Google Reader not available');
+        }
+            
+        chrome.pageAction.setIcon(
+        {
+            tabId: tabId,
+            path:  icon
+        });
+        
+        chrome.pageAction.setTitle(
+        {
+            tabId: tabId,
+            title: title
+        });
+
+        chrome.pageAction.show(tabId);
+    },
     
-    chrome.pageAction.setTitle(
+    isUnauthorizedStatus: function(status)
     {
-        tabId: tabId,
-        title: title
-    });
-
-    chrome.pageAction.show(tabId);
-};
-
-window.isUnauthorizedStatus = function(status)
-{
-    return ((status == 401) || (status == 403))
+        return ((status == 401) || (status == 403))
+    }
 };
 
 chrome.extension.onConnect.addListener(function(port)
@@ -64,21 +72,21 @@ chrome.extension.onConnect.addListener(function(port)
     {
         var state = 'failed';
         
-        if (window.isUnauthorizedStatus(xhr.status))
+        if (jachymko.chromeReader.isUnauthorizedStatus(xhr.status))
         {
             state = 'unauthorized';
         }
     
-        window.showPageAction(tabId, state);
+        jachymko.chromeReader.showPageAction(tabId, state);
     };
 
     port.onMessage.addListener(function(msg)
     {
         if ((msg) && (msg.action == 'FeedsDiscovered'))
         {
-            googleReader.getSubscription(msg.data[0], errorHandler, function(sub)
+            jachymko.chromeReader.client.getSubscription(msg.data[0], errorHandler, function(sub)
             {
-                window.showPageAction(tabId, sub ? 'subscribed' : null);
+                jachymko.chromeReader.showPageAction(tabId, sub ? 'subscribed' : null);
             });
         }            
     });
