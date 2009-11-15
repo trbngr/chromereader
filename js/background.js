@@ -1,6 +1,11 @@
-/// <reference path="reader_client.js" />
+﻿/// <reference path="reader_client.js" />
 
 window.googleReader = new GoogleReaderClient();
+
+window.localize = function(key, text)
+{
+    return chrome.i18n.getMessage(key) || (text);
+};
 
 window.openSignInPage = function()
 {
@@ -13,22 +18,22 @@ window.openSignInPage = function()
 window.showPageAction = function(tabId, state)
 {
     var icon = 'png/page_action.png';
-    var title = chrome.i18n.getMessage('page_action_title');
+    var title = localize('page_action_title', 'Subscribe page feed');
     
     if (state == 'subscribed')
     {
         icon = 'png/page_action_subscribed.png';
-        title = chrome.i18n.getMessage('page_action_title_subscribed');
+        title = localize('page_action_title_subscribed', 'Edit page feed subscribtion');
     }
     else if (state == 'unauthorized')
     {
         icon = 'png/page_action_error.png';
-        title = chrome.i18n.getMessage('page_action_title_unauthorized');
+        title = localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
     }
     else if (state == 'failed')
     {
         icon = 'png/page_action_error.png';
-        title = chrome.i18n.getMessage('page_action_title_failed');
+        title = localize('page_action_title_failed', 'Google Reader not available');
     }
         
     chrome.pageAction.setIcon(

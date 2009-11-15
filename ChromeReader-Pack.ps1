@@ -1,3 +1,6 @@
+$ExtName = 'ChromeReader'
+$OutDir = "..\${ExtName}_out"
+
 function Get-ScriptDirectory
 {
     $Invocation = (Get-Variable MyInvocation -Scope 1).Value
@@ -13,10 +16,10 @@ try
     	Remove-Item ..\tmp -Force -Recurse
     }
 
-    xcopy . ..\tmp /s /e /i /exclude:ChromeReader.exclude
+    xcopy . ..\tmp /s /e /i "/exclude:$ExtName.exclude"
 
     $ExtDir = (Resolve-Path ..\tmp).Path
-    $ExtPem = (Resolve-Path .\ChromeReader.pem).Path
+    $ExtPem = (Resolve-Path ".\$ExtName.pem").Path
 
     $ChromeArgs = 
     (
@@ -30,13 +33,13 @@ try
     
     if (Test-Path ..\tmp.crx)
     {
-        if (-not (Test-Path ..\ChromeReader_out  -PathType Container))
+        if (-not (Test-Path $OutDir -PathType Container))
         {
-            New-Item ..\ChromeReader_out -ItemType Container
+            New-Item $OutDir -ItemType Container
         }
         
-        Move-Item ..\tmp.crx ..\ChromeReader_out\ChromeReader.crx
-        Invoke-Item ..\ChromeReader_out
+        Move-Item ..\tmp.crx "${OutDir}\${ExtName}.crx"
+        Invoke-Item $OutDir
     }
     
     Remove-Item ..\tmp -Force -Recurse

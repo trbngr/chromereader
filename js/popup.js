@@ -129,14 +129,14 @@ var UI =
     {
         var rx = /\[(.*)\]/;
         
-        $('.i18n').each(function(i)
+        $('*[i18n\\:msg]').each(function(i)
         {
             var el = $(this);
-            var match = rx.exec(el.text());
+            var key = el.attr('i18n\\:msg');
             
-            if (match && match[1])
+            if (key)
             {
-                el.text(chrome.i18n.getMessage(match[1]));
+                el.text(BackgroundPage.localize(key, el.text()));
             }
         });
     }
@@ -205,10 +205,12 @@ window.onunload = function()
 
 window.onload = function()
 {
-    UI.localize();
-    
     BackgroundPage = chrome.extension.getBackgroundPage();
     GoogleReader = BackgroundPage.googleReader;
+
+    try {    
+    UI.localize();
+    } catch(e) { GoogleReader._log(e); }
     
     // add event listeners
     UI.signin.click(openSignInPage);
