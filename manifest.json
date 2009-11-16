@@ -18,6 +18,9 @@
 	
 	"page_action":
 	{
+		"default_icon": "png/page_action.png",
+		"default_title": "Chrome Reader",
+	
 		"popup": "popup.html",
 		"type": "tab"
 	},

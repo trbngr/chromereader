@@ -126,8 +126,6 @@ var UI =
     
     localize: function()
     {
-        var rx = /\[(.*)\]/;
-        
         $('*[i18n\\:msg]').each(function(i)
         {
             var el = $(this);
