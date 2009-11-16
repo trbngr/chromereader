@@ -7,6 +7,17 @@ body
     -webkit-user-select:none;
 }
 
+body, input
+{
+    font: menu;
+}
+
+h1 
+{
+    font-size: 120%;
+    font-weight: normal;
+}
+
 #remove
 {
     width: 6em;

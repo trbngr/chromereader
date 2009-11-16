@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{D2BEC3DE-18B6-420B-9943-F654BE05DB6E}"
 	ProjectSection(SolutionItems) = preProject
-		css\common.css = css\common.css
 		css\popup.css = css\popup.css
 	EndProjectSection
 EndProject
