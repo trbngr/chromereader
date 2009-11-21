@@ -1,20 +1,18 @@
-if (typeof(jachymko) == 'undefined')
+window.chromeReader = $.extend(window.chromeReader || { },
 {
-    jachymko = { };
-}
+    ObjectCache: function(factory, maxAge)
+    {
+        this._acquired = null;
+        
+        this._value = null;
+        this._hasValue = false;
+        
+        this._factory = factory;
+        this._maxAge = maxAge || 60000;
+    }
+});
 
-jachymko.ObjectCache = function(factory, maxAge)
-{
-    this._acquired = null;
-    
-    this._value = null;
-    this._hasValue = false;
-    
-    this._factory = factory;
-    this._maxAge = maxAge || 60000;
-};
-
-jachymko.ObjectCache.prototype.age = function()
+chromeReader.ObjectCache.prototype.age = function()
 {
     if (this._acquired)
     {
@@ -24,7 +22,7 @@ jachymko.ObjectCache.prototype.age = function()
     return null;
 };
 
-jachymko.ObjectCache.prototype.get = function(error, success)
+chromeReader.ObjectCache.prototype.get = function(error, success)
 {
     var self = this;
     
@@ -45,7 +43,7 @@ jachymko.ObjectCache.prototype.get = function(error, success)
     }
 };
 
-jachymko.ObjectCache.prototype.invalidate = function()
+chromeReader.ObjectCache.prototype.invalidate = function()
 {
     this._hasValue = false;
 };

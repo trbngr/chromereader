@@ -1,103 +1,64 @@
-/// <reference path="..\..\jquery-1.3.2.js" />
-/// <reference path="object_cache.js" />
-
-if (typeof(jachymko) == 'undefined')
+window.chromeReader = $.extend(window.chromeReader || { },
 {
-    jachymko = { };
-}
-
-jachymko.GoogleReaderClient = function()
-{
-    var self = this;
-    
-    self._url = 'http://www.google.com/reader/api/0/';
-    self._client = 'ChromeReader'
-    
-    self._tags = new jachymko.ObjectCache(function(error, success)
+    GoogleReaderClient: function()
     {
-        self._get(
+        var self = this;
+        
+        self._url = 'http://www.google.com/reader/api/0/';
+        self._client = 'ChromeReader'
+        
+        self._tags = new chromeReader.ObjectCache(function(error, success)
         {
-            url: 'tag/list',
-            success: success,
-            error: error,
-            data:
+            self._get(
             {
-                output: 'json'
-            }
+                url: 'tag/list',
+                success: success,
+                error: error,
+                data:
+                {
+                    output: 'json'
+                }
+            });
         });
-    });
-    
-    self._token = new jachymko.ObjectCache(function(error, success)
-    {
-        self._get(
+        
+        self._token = new chromeReader.ObjectCache(function(error, success)
         {
-            url: 'token',
-            dataType: 'text',
-            error: error,
-            success: success
-        });
-    });
-    
-    self._subscriptions = new jachymko.ObjectCache(function(error, success)
-    {
-        self._get(
-        {
-            url: 'subscription/list',
-            success: success,
-            error: error,
-            data:
+            self._get(
             {
-                output: 'json'
-            }
-        });    
-    });
-};
+                url: 'token',
+                dataType: 'text',
+                error: error,
+                success: success
+            });
+        });
+        
+        self._subscriptions = new chromeReader.ObjectCache(function(error, success)
+        {
+            self._get(
+            {
+                url: 'subscription/list',
+                success: success,
+                error: error,
+                data:
+                {
+                    output: 'json'
+                }
+            });    
+        });
+    }
+});
 
-jachymko.GoogleReaderClient.prototype._log = function(msg)
-{
-    var curr  = arguments.callee.caller, 
-        FUNC  = 'function', ANON = "{anonymous}", 
-        fnRE  = /function\s*([\w\-$]+)?\s*\(/i, 
-        stack = [],j=0, 
-        fn,args,i; 
-
-    while (curr)
-    { 
-        fn    = fnRE.test(curr.toString()) ? RegExp.$1 || ANON : ANON; 
-        args  = stack.slice.call(curr.arguments); 
-        i     = args.length; 
-
-        while (i--) 
-        { 
-            switch (typeof args[i]) 
-            { 
-                case 'string'  : args[i] = '"'+args[i].replace(/"/g,'\\"')+'"'; break; 
-                case 'function': args[i] = FUNC; break; 
-            } 
-        } 
-
-        stack[j++] = fn + '(' + args.join() + ')'; 
-        curr = curr.caller; 
-    } 
-
-    console.log(
-    {
-        stack: stack,
-        data: msg
-    });
-};
-
-jachymko.GoogleReaderClient.prototype._makeUrl = function(part)
+chromeReader.GoogleReaderClient.prototype._makeUrl = function(part)
 {
     return this._url + part + '?client=' + this._client + '&ck=' + new Date().valueOf();
 };
 
-jachymko.GoogleReaderClient.prototype._makeFeedId = function(url)
+chromeReader.GoogleReaderClient.prototype._makeFeedId = function(feedOrUrl)
 {
-    return 'feed/' + url;
+    return feedOrUrl.id || ('feed/' + feedOrUrl);
 };
 
-jachymko.GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
+chromeReader.GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
 {
     var self = this;
     
@@ -120,7 +81,7 @@ jachymko.GoogleReaderClient.prototype._getFolderId = function(folder, error, suc
     });
 };
 
-jachymko.GoogleReaderClient.prototype._get = function(options)
+chromeReader.GoogleReaderClient.prototype._get = function(options)
 {
     var self = this;
 
@@ -131,7 +92,7 @@ jachymko.GoogleReaderClient.prototype._get = function(options)
     $.ajax(options);
 };
 
-jachymko.GoogleReaderClient.prototype._post = function(options)
+chromeReader.GoogleReaderClient.prototype._post = function(options)
 {
     var self = this;
 
@@ -148,7 +109,7 @@ jachymko.GoogleReaderClient.prototype._post = function(options)
     });
 };
 
-jachymko.GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data)
+chromeReader.GoogleReaderClient.prototype._editSubscription = function(feed, error, success, data)
 {
     data.s = this._makeFeedId(feed);
 
@@ -162,7 +123,7 @@ jachymko.GoogleReaderClient.prototype._editSubscription = function(feed, error, 
     });
 };
 
-jachymko.GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
+chromeReader.GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
 {
     var self = this;
     
@@ -175,7 +136,7 @@ jachymko.GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, fol
     });
 };
 
-jachymko.GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
+chromeReader.GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
 {
     var self = this;
     
@@ -188,7 +149,7 @@ jachymko.GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, 
     });
 };
 
-jachymko.GoogleReaderClient.prototype.subscribe = function(feed, error, success)
+chromeReader.GoogleReaderClient.prototype.subscribe = function(feed, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -196,7 +157,7 @@ jachymko.GoogleReaderClient.prototype.subscribe = function(feed, error, success)
     });
 };
 
-jachymko.GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
+chromeReader.GoogleReaderClient.prototype.unsubscribe = function(feed, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -204,7 +165,7 @@ jachymko.GoogleReaderClient.prototype.unsubscribe = function(feed, error, succes
     });
 };
 
-jachymko.GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
+chromeReader.GoogleReaderClient.prototype.setTitle = function(feed, title, error, success)
 {
     this._editSubscription(feed, error, success,
     {
@@ -212,7 +173,7 @@ jachymko.GoogleReaderClient.prototype.setTitle = function(feed, title, error, su
     });
 };
 
-jachymko.GoogleReaderClient.prototype.getFolders = function(error, success)
+chromeReader.GoogleReaderClient.prototype.getFolders = function(error, success)
 {
     var self = this;
     
@@ -236,52 +197,57 @@ jachymko.GoogleReaderClient.prototype.getFolders = function(error, success)
     });
 };
 
-jachymko.GoogleReaderClient.prototype.getSubscription = function(feed, error, success)
+chromeReader.GoogleReaderClient.prototype.getSubscription = function(feeds, error, success)
 {
     var self = this;
     
-    self._subscriptions.get(error, function(result, status)
+    self._subscriptions.get(error, function(result)
     {
-        var feedid = self._makeFeedId(feed);
-        
+        var feedMap = { };
+
+        for (var j in feeds)
+        {
+            feedMap[self._makeFeedId(feeds[j])] = true;
+        }   
+             
         for (var i in result.subscriptions)
         {
             var subscr = result.subscriptions[i];
             
-            if (subscr.id == feedid)
+            if (feedMap[subscr.id])
             {
-                success(subscr, status);
+                success(subscr);
                 return;
             }
         }
         
-        success(null, status);
+        success(null);
     });
 };
 
-jachymko.GoogleReaderClient.prototype.ensureSubscribed = function(feed, error, success)
+chromeReader.GoogleReaderClient.prototype.ensureSubscribed = function(feeds, error, success)
 {
     var self = this;
-        
-    self.getSubscription(feed, error, function(sub)
+    
+    self.getSubscription(feeds, error, function(sub)
     {
         if (sub)
         {
-            sub.isNewSubscription = false;
-            success(sub, status);
+            sub.isNew = false;
+            success(sub);
         }
         else
         {
-            self.subscribe(feed, error, function(result)
+            self.subscribe(feeds[0], error, function()
             {
-                self.getSubscription(feed, error, function(sub)
+                self.getSubscription(feeds, error, function(sub)
                 {
                     if (sub)
                     {
-                        sub.isNewSubscription = true;
+                        sub.isNew = true;
                     }
                     
-                    success(sub, status);
+                    success(sub);
                 });
             });
         }            

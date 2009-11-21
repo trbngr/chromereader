@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{D2BEC3DE-18B6-420B-9943-F654BE05DB6E}"
 	ProjectSection(SolutionItems) = preProject
 		css\popup.css = css\popup.css
@@ -11,8 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{C2940F8B-2A09-
 		js\background.js = js\background.js
 		js\content_script.js = js\content_script.js
 		js\object_cache.js = js\object_cache.js
-		js\popup.js = js\popup.js
+		js\popup_controller.js = js\popup_controller.js
+		js\popup_view.js = js\popup_view.js
 		js\reader_client.js = js\reader_client.js
+		js\ui.checkboxlist.js = js\ui.checkboxlist.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "png", "png", "{0F9CA945-ABC8-4B9C-B445-DED71869A9A5}"

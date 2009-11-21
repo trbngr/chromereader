@@ -1,13 +1,8 @@
-﻿/// <reference path="reader_client.js" />
-
-if (typeof(jachymko) == 'undefined')
+window.chromeReader = $.extend(window.chromeReader || { },
 {
-    jachymko = { };
-}
-
-jachymko.chromeReader = 
-{
-    client: new jachymko.GoogleReaderClient(),
+    client: new chromeReader.GoogleReaderClient(),
+    
+    log: function() { console.log(arguments); },
     
     localize: function(key, text)
     {
@@ -24,45 +19,48 @@ jachymko.chromeReader =
     
     showPageAction: function(tabId, state)
     {
-        var icon = 'png/page_action.png';
-        var title = this.localize('page_action_title', 'Subscribe page feed');
-        
-        if (state == 'subscribed')
+        if (tabId)
         {
-            icon = 'png/page_action_subscribed.png';
-            title = this.localize('page_action_title_subscribed', 'Edit page feed subscribtion');
-        }
-        else if (state == 'unauthorized')
-        {
-            icon = 'png/page_action_error.png';
-            title = this.localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
-        }
-        else if (state == 'failed')
-        {
-            icon = 'png/page_action_error.png';
-            title = this.localize('page_action_title_failed', 'Google Reader not available');
-        }
+            var icon = 'png/page_action.png';
+            var title = this.localize('page_action_title', 'Subscribe page feed');
             
-        chrome.pageAction.setIcon(
-        {
-            tabId: tabId,
-            path:  icon
-        });
-        
-        chrome.pageAction.setTitle(
-        {
-            tabId: tabId,
-            title: title
-        });
+            if (state == 'subscribed')
+            {
+                icon = 'png/page_action_subscribed.png';
+                title = this.localize('page_action_title_subscribed', 'Edit page feed subscribtion');
+            }
+            else if (state == 'unauthorized')
+            {
+                icon = 'png/page_action_error.png';
+                title = this.localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
+            }
+            else if (state == 'failed')
+            {
+                icon = 'png/page_action_error.png';
+                title = this.localize('page_action_title_failed', 'Google Reader not available');
+            }
+                
+            chrome.pageAction.setIcon(
+            {
+                tabId: tabId,
+                path:  icon
+            });
+            
+            chrome.pageAction.setTitle(
+            {
+                tabId: tabId,
+                title: title
+            });
 
-        chrome.pageAction.show(tabId);
+            chrome.pageAction.show(tabId);
+        }
     },
     
     isUnauthorizedStatus: function(status)
     {
         return ((status == 401) || (status == 403))
     }
-};
+});
 
 chrome.extension.onConnect.addListener(function(port)
 {
@@ -72,21 +70,21 @@ chrome.extension.onConnect.addListener(function(port)
     {
         var state = 'failed';
         
-        if (jachymko.chromeReader.isUnauthorizedStatus(xhr.status))
+        if (chromeReader.isUnauthorizedStatus(xhr.status))
         {
             state = 'unauthorized';
         }
     
-        jachymko.chromeReader.showPageAction(tabId, state);
+        chromeReader.showPageAction(tabId, state);
     };
 
     port.onMessage.addListener(function(msg)
     {
         if ((msg) && (msg.action == 'FeedsDiscovered'))
         {
-            jachymko.chromeReader.client.getSubscription(msg.data[0], errorHandler, function(sub)
+            chromeReader.client.getSubscription(msg.data, errorHandler, function(sub)
             {
-                jachymko.chromeReader.showPageAction(tabId, sub ? 'subscribed' : null);
+                chromeReader.showPageAction(tabId, sub ? 'subscribed' : null);
             });
         }            
     });
