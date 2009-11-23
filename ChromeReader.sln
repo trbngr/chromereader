@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "png", "png", "{0F9CA945-ABC
 		png\page_action.png = png\page_action.png
 		png\page_action_error.png = png\page_action_error.png
 		png\page_action_subscribed.png = png\page_action_subscribed.png
+		png\throbber.gif = png\throbber.gif
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8586FE15-78F3-4407-92BB-8256C75553AF}"

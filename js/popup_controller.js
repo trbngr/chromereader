@@ -21,6 +21,8 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
 
         function errorHandler(xhr, status, exc)
         {
+            chrome.extension.getBackgroundPage().console.log([xhr, status, exc]);
+        
             if (chromeReader.isUnauthorizedStatus(xhr.status))
             {
                 showPageAction('unauthorized');
