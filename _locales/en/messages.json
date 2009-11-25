@@ -63,9 +63,19 @@
 	{
 		"message": "Name:"
 	},
+
+	"popup_feed_folder":
+	{
+		"message": "Folder:"
+	},
 	
 	"popup_feed_folders":
 	{
 		"message": "Folders:"
+	},
+
+	"popup_newfolder_placeholder":
+	{
+		"message": "New Folder"
 	}
 }

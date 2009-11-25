@@ -64,8 +64,18 @@
 		"message": "Jméno:"
 	},
 	
+	"popup_feed_folder":
+	{
+		"message": "Složka:"
+	},
+
 	"popup_feed_folders":
 	{
 		"message": "Složky:"
+	},
+
+	"popup_newfolder_placeholder":
+	{
+		"message": "Nová složka"
 	}
 }

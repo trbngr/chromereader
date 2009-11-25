@@ -1,6 +1,6 @@
 window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
 {
-    View: function(context)
+    View: function(context, chromeReader)
     {
         var prevTitle = null;
         
@@ -8,12 +8,14 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         var ui = 
         {
             feedName: $('#feedName', context),
+            remove: $('#remove', context),
+            signin: $('#signin', context),
             
             folders: $('#folders', context),
-            foldersRow: $('#foldersRow', context),
+            foldersLabel: $('label[for="folders"]', context),
             
-            remove: $('#remove', context),
-            signin: $('#signin', context)
+            newFolder: $('#newFolder', context),
+            newFolderLI: $('#newFolderLI', context)
         };
         
         function event(name)
@@ -100,10 +102,23 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         
         self.folders = function(folders, checked)
         {
-            ui.folders.checkboxlist('setItems', folders);
-            ui.folders.checkboxlist('check', checked);
-            
-            ui.foldersRow.show();
+            if (folders && folders.length)
+            {
+                ui.folders.addClass('hasitems');
+                
+                ui.newFolder.remove();
+                ui.newFolder.appendTo(ui.newFolderLI);
+
+                var placeholder = chromeReader.localize('popup_newfolder_placeholder', "New Folder");
+                var label = chromeReader.localize('popup_feed_folders', "Folders:");
+
+                ui.newFolder.attr('placeholder', placeholder);
+                ui.foldersLabel.html(label);
+            }
+
+            ui.folders
+                .checkboxlist('setItems', folders)
+                .checkboxlist('check', checked);
         };
         
         $(window).unload(triggerRename);

@@ -4,12 +4,18 @@
     {
         _init: function()
         {
+            this.list = $('ul', this.element);
+            this.listCreated = false;
+            
+            if (!this.list[0])
+            {
+                this.listCreated = true;
+
+                this.list = $('<ul></ul>');
+                this.list.appendTo(this.element);
+            }
+        
             this.element.addClass('ui-checkboxlist ui-widget');
-            
-            this.list  = $('<ul></ul>');
-            this.list.appendTo(this.element);
-            
-            this.uniquifier = $.data(this.list);
         },
         
         _doCheck: function(items, val)
@@ -36,7 +42,11 @@
         
         destroy: function()
         {
-            this.list.remove();
+            if (this.listCreated)
+            {
+                this.list.remove();
+            }
+            
             this.element.removeClass('ui-checkboxlist ui-widget');
             
             $.widget.prototype.destroy.apply(this, arguments);
@@ -58,51 +68,42 @@
         
             function newCheckbox(itm, chkid)
             {
-                var chk = $('<input />');
-                
-                chk.attr(
-                { 
-                    id:    chkid, 
-                    type:  'checkbox',
-                    value: itm.value || itm,
-                });
-
-                chk.change(function()
-                {
-                    if (this.checked)
+                return $('<input type="checkbox" />')
+                    .attr({ id: chkid, value: itm.value || itm })
+                    .change(function()
                     {
-                        thisWidget._trigger('checked', 0, this.value);
-                    }
-                    else
-                    {
-                        thisWidget._trigger('unchecked', 0, this.value);
-                    }
-                });
-                
-                return chk;
+                        if (this.checked)
+                        {
+                            thisWidget._trigger('checked', 0, this.value);
+                        }
+                        else
+                        {
+                            thisWidget._trigger('unchecked', 0, this.value);
+                        }
+                    });
             }
             
             function newLabel(itm, chkid)
             {
-                var label = $('<label></label>');
-                
-                label.attr('for', chkid);
-                label.text(itm.label || itm);
-                
-                return label;
+                return itm.element ||
+                    $('<label></label>')
+                    .attr('for', chkid)
+                    .text(itm.label || itm);
             }
             
-            for (var i in items)
+            for (var i = items.length - 1; i >= 0; i--)
             {
                 var itm = items[i];
-                var chkid = 'ui-checkboxlist-check-' + this.uniquifier + '-' + i;
+                var chkid = 'ui-checkboxlist-check-' + $.data(itm);
                 
                 var li = $('<li></li>');
+                var chk = newCheckbox(itm, chkid);
+                var label = newLabel(itm, chkid);
 
-                li.appendTo(this.list);
+                chk.appendTo(li);
+                label.appendTo(li);
 
-                newCheckbox(itm, chkid).appendTo(li);
-                newLabel(itm, chkid).appendTo(li);                
+                li.prependTo(this.list);
             }
         }
     });

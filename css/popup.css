@@ -12,10 +12,63 @@ body, input
     font: menu;
 }
 
+input[type="text"]
+{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+label
+{
+    color: MenuText;
+}
+
+label[for="feedName"], label[for="folders"]
+{
+    padding-right: 0.2em;
+}
+
 h1 
 {
     font-size: 120%;
     font-weight: normal;
+    margin: 0 0 0.2em 0;
+}
+
+#connecting
+{
+    background: url('../png/throbber.gif') no-repeat left center;
+    padding-left: 20px;
+}
+
+#feedName
+{
+    margin-bottom: 0.3em;
+}
+
+#folders
+{
+    padding: 0;
+    margin: 0;
+    max-height: 12em;
+    overflow-y: auto;
+}
+
+#folders.hasitems
+{
+    border: solid 1px ThreeDShadow;
+    padding: 0 0.2em 0.2em 0;
+}
+
+.fullwidth
+{
+    width: 100%;
+}
+
+.hidden 
+{ 
+    display: none; 
 }
 
 .right
@@ -26,53 +79,19 @@ h1
     padding: 0.2em 0 0 0;
 }
 
-#connecting
+.table
 {
-    background: url('../png/throbber.gif') no-repeat left center;
-    padding-left: 20px;
-}
-
-#folders ul
-{
-    margin: 0;
+    display: table;
     padding: 0;
-    list-style: none;
-    overflow-y: auto;
-    height: 4em;
-    border: solid 1px ThreeDShadow;
-}
-
-#folders label
-{
-    color: MenuText;
-}
-
-.row 
-{
-    clear: both;
-    margin: 0.25em 0 0 0;
-}
-
-.row > label
-{
-    width: 3.5em;
-    float: left;
-    padding: 0.1em 0;
     margin: 0;
 }
 
-.row > .input
+.table > *
 {
-    margin: 0 0 0 3.75em;
+    display: table-row;
 }
 
-.row > .input > input 
-{ 
-    width: 100%; 
-    margin: 0;
-}
-
-.hidden 
-{ 
-    display: none; 
+.table > * > *
+{
+    display: table-cell;
 }
