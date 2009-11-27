@@ -18,26 +18,42 @@
             this.element.addClass('ui-checkboxlist ui-widget');
         },
         
-        _doCheck: function(items, val)
+        _findCheckboxes: function(items)
         {
+            var boxes = $(':checkbox', this.list);
+            var results = [];
+
             if (!$.isArray(items))
             {
                 items = [ items ];
             }
-            
-            var boxes = $(':checkbox', this.list);
-            
+                        
             for (var i in items)
             {
                 for (var b = 0; b < boxes.length; b++)
                 {
                     if (boxes[b].value == items[i])
                     {
-                        boxes[b].checked = val;
+                        results.push(boxes[b]);
                         break;
                     }
                 }
-            }        
+            }
+            
+            return $(results);
+        },
+        
+        _findListItems: function(items)
+        {
+            return this._findCheckboxes(items).parent('li');
+        },
+        
+        _doCheck: function(items, val)
+        {
+            this._findCheckboxes(items).each(function()
+            {
+                this.checked = val;
+            });
         },
         
         destroy: function()
@@ -60,6 +76,11 @@
         uncheck: function(items)
         {
             this._doCheck(items, false);
+        },
+        
+        highlight: function(items)
+        {
+            this._findListItems(items).effect('highlight');
         },
         
         setItems: function(items)
@@ -91,12 +112,14 @@
                     .text(itm.label || itm);
             }
             
+            $('.ui-checkboxlist-item', this.list).remove();
+            
             for (var i = items.length - 1; i >= 0; i--)
             {
                 var itm = items[i];
                 var chkid = 'ui-checkboxlist-check-' + $.data(itm);
                 
-                var li = $('<li></li>');
+                var li = $('<li class="ui-checkboxlist-item"></li>');
                 var chk = newCheckbox(itm, chkid);
                 var label = newLabel(itm, chkid);
 

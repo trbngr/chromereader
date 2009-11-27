@@ -41,6 +41,20 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 prevTitle = newTitle;
             }
         }
+
+        function triggerNewFolder()
+        {
+            var val = ui.newFolder.val();
+            
+            if (val)
+            {
+                ui.newFolder
+                    .attr('disabled', 'disabled')
+                    .addClass('busy');
+                    
+                self.newFolder(val);
+            }
+        }
         
         function setState(state)
         {
@@ -55,6 +69,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         }
         
         self.addFolder = event('addFolder');
+        self.newFolder = event('newFolder');
         self.removeFolder = event('removeFolder');
 
         self.rename = event('rename');
@@ -100,29 +115,49 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             }            
         };
         
-        self.folders = function(folders, checked)
+        self.folders = function(folders, checked, newFolder)
         {
+            if (newFolder)
+            {
+                checked = checked || [];
+                checked.push(newFolder);
+            }
+            
             if (folders && folders.length)
             {
-                ui.folders.addClass('hasitems');
-                
-                ui.newFolder.remove();
-                ui.newFolder.appendTo(ui.newFolderLI);
-
                 var placeholder = chromeReader.localize('popup_newfolder_placeholder', "New Folder");
                 var label = chromeReader.localize('popup_feed_folders', "Folders:");
 
-                ui.newFolder.attr('placeholder', placeholder);
+                ui.newFolder
+                    .appendTo(ui.newFolderLI)
+                    .attr('placeholder', placeholder)
+                    .attr('disabled', '')
+                    .removeClass('busy')
+                    .val('');
+
                 ui.foldersLabel.html(label);
+
+                ui.folders.addClass('hasitems');
             }
 
             ui.folders
                 .checkboxlist('setItems', folders)
-                .checkboxlist('check', checked);
+                .checkboxlist('check', checked)
+                .checkboxlist('highlight', newFolder);
         };
         
         $(window).unload(triggerRename);
+
         ui.feedName.blur(triggerRename);
+        
+        ui.newFolder.blur(triggerNewFolder);
+        ui.newFolder.keyup(function(e)
+        {
+            if (e.keyCode == 13)
+            {
+                triggerNewFolder();
+            }
+        });
         
         ui.signin.click(function()
         {

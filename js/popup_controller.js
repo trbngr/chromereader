@@ -43,6 +43,19 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             }
         }
         
+        function loadFolders(newFolder)
+        {
+            client.getFolders(errorHandler, function(folders)
+            {
+                var checked = self.subscr.categories.map(function(cat)
+                {
+                    return cat.label;
+                });
+                
+                view.folders(folders, checked, newFolder);
+            });
+        }
+        
         function ensureSubscribed(feeds)
         {
             client.ensureSubscribed(feeds, errorHandler, function(s)
@@ -52,15 +65,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 view.subscription(s);
                 showPageAction('subscribed');
 
-                client.getFolders(errorHandler, function(folders)
-                {
-                    var checked = s.categories.map(function(cat)
-                    {
-                        return cat.label;
-                    });
-                    
-                    view.folders(folders, checked);
-                });
+                loadFolders();
             });
         }
 
@@ -69,6 +74,15 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             view.addFolder(function(event, folder)
             {
                 client.addSubscriptionFolder(self.subscr, folder, errorHandler, noop);
+            });
+            
+            view.newFolder(function(event, folder)
+            {
+                client.addSubscriptionFolder(self.subscr, folder, errorHandler, function()
+                {
+                    client.invalidate();
+                    loadFolders(folder);
+                });
             });
             
             view.removeFolder(function(event, folder)

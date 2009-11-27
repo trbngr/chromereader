@@ -58,27 +58,9 @@ chromeReader.GoogleReaderClient.prototype._makeFeedId = function(feedOrUrl)
     return feedOrUrl.id || ('feed/' + feedOrUrl);
 };
 
-chromeReader.GoogleReaderClient.prototype._getFolderId = function(folder, error, success)
+chromeReader.GoogleReaderClient.prototype._makeFolderId = function(folder)
 {
-    var self = this;
-    
-    self._tags.get(error, function(result)
-    {
-        for (var i in result.tags)
-        {
-            var tag = result.tags[i];
-            var pieces = tag.id.split('/');
-            
-            if ((pieces) && (pieces.length == 4))
-            {
-                if ((pieces[2] == 'label') && (pieces[3] == folder))
-                {
-                    success(tag.id);
-                    break;
-                }
-            }
-        }
-    });
+    return 'user/-/label/' + folder;
 };
 
 chromeReader.GoogleReaderClient.prototype._get = function(options)
@@ -125,28 +107,24 @@ chromeReader.GoogleReaderClient.prototype._editSubscription = function(feed, err
 
 chromeReader.GoogleReaderClient.prototype.addSubscriptionFolder = function(feed, folder, error, success)
 {
-    var self = this;
-    
-    self._getFolderId(folder, error, function(tagId)
+    this._editSubscription(feed, error, success, 
     {
-        self._editSubscription(feed, error, success, 
-        {
-            ac: 'edit', a: tagId
-        });
+        ac: 'edit', a: this._makeFolderId(folder)
     });
 };
 
 chromeReader.GoogleReaderClient.prototype.removeSubscriptionFolder = function(feed, folder, error, success)
 {
-    var self = this;
-    
-    self._getFolderId(folder, error, function(tagId)
+    this._editSubscription(feed, error, success, 
     {
-        self._editSubscription(feed, error, success, 
-        {
-            ac: 'edit', r: tagId
-        });
+        ac: 'edit', r: this._makeFolderId(folder)
     });
+};
+
+chromeReader.GoogleReaderClient.prototype.invalidate = function()
+{
+    this._tags.invalidate();
+    this._subscriptions.invalidate();
 };
 
 chromeReader.GoogleReaderClient.prototype.subscribe = function(feed, error, success)

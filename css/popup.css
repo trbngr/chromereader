@@ -19,6 +19,11 @@ input[type="text"]
     margin: 0;
 }
 
+input[type="text"]:disabled
+{
+    border: solid 1px ThreeDShadow;    
+}
+
 label
 {
     color: MenuText;
@@ -36,10 +41,15 @@ h1
     margin: 0 0 0.2em 0;
 }
 
-#connecting
+#connecting, #newFolder.busy
 {
-    background: url('../png/throbber.gif') no-repeat left center;
-    padding-left: 20px;
+    background: url('../png/throbber.gif') no-repeat 98% center;
+    padding: 2px 0;
+}
+
+#newFolder.busy:focus
+{
+    outline: none;
 }
 
 #feedName
