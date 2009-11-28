@@ -56,7 +56,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             });
         }
         
-        function ensureSubscribed(feeds)
+        function ensureSubscribed(feeds, newFolder)
         {
             client.ensureSubscribed(feeds, errorHandler, function(s)
             {
@@ -65,7 +65,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 view.subscription(s);
                 showPageAction('subscribed');
 
-                loadFolders();
+                loadFolders(newFolder);
             });
         }
 
@@ -80,8 +80,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             {
                 client.addSubscriptionFolder(self.subscr, folder, errorHandler, function()
                 {
-                    client.invalidate();
-                    loadFolders(folder);
+                    ensureSubscribed([ self.subscr ], folder);
                 });
             });
             
@@ -117,6 +116,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 
                 self.tabPort = chrome.tabs.connect(tab.id);
                 self.tabPort.onMessage.addListener(ensureSubscribed);
+                
                 self.tabPort.postMessage('GetFeeds');
             });
         };

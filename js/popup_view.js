@@ -122,22 +122,24 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 checked = checked || [];
                 checked.push(newFolder);
             }
+
+            var placeholder = chromeReader.localize('popup_newfolder_placeholder', "New Folder");
+            ui.newFolder.attr('placeholder', placeholder)
             
             if (folders && folders.length)
             {
-                var placeholder = chromeReader.localize('popup_newfolder_placeholder', "New Folder");
-                var label = chromeReader.localize('popup_feed_folders', "Folders:");
-
                 ui.newFolder
                     .appendTo(ui.newFolderLI)
-                    .attr('placeholder', placeholder)
                     .attr('disabled', '')
                     .removeClass('busy')
                     .val('');
 
-                ui.foldersLabel.html(label);
-
                 ui.folders.addClass('hasitems');
+            }
+            else
+            {
+                var label = chromeReader.localize('popup_feed_folder', "Folder:");
+                ui.foldersLabel.html(label);
             }
 
             ui.folders
@@ -147,10 +149,8 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         };
         
         $(window).unload(triggerRename);
-
         ui.feedName.blur(triggerRename);
         
-        ui.newFolder.blur(triggerNewFolder);
         ui.newFolder.keyup(function(e)
         {
             if (e.keyCode == 13)

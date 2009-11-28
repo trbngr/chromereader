@@ -80,7 +80,11 @@
         
         highlight: function(items)
         {
-            this._findListItems(items).effect('highlight');
+            var li = this._findListItems(items);
+            var parent = this.list.parent();
+            
+            parent.scrollTo(li, { easing: 'swing', over: -2 });
+            li.effect('highlight');
         },
         
         setItems: function(items)

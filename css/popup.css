@@ -15,7 +15,7 @@ body, input
 input[type="text"]
 {
     width: 100%;
-    padding: 0;
+    /*padding: 0;*/
     margin: 0;
 }
 
@@ -41,7 +41,13 @@ h1
     margin: 0 0 0.2em 0;
 }
 
-#connecting, #newFolder.busy
+#connecting
+{
+    background: url('../png/throbber.gif') no-repeat left center;
+    padding-left: 20px;
+}
+
+#newFolder.busy
 {
     background: url('../png/throbber.gif') no-repeat 98% center;
     padding: 2px 0;
@@ -69,6 +75,11 @@ h1
 {
     border: solid 1px ThreeDShadow;
     padding: 0 0.2em 0.2em 0;
+}
+
+#folders.hasitems li
+{
+    margin-bottom: 0.2em;
 }
 
 .fullwidth
