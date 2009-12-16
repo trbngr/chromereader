@@ -1,41 +1,41 @@
-<html xmlns:i18n="i18n">
+<html>
 <head>
     <link type="text/css" rel="stylesheet" href="css/popup.css" />
 </head>
 <body>
 
-    <div id="connecting" i18n:msg="popup_connecting">
+    <div id="connecting">
         Connecting to Google Reader...
     </div>
     
-    <div id="failed" class="hidden" i18n:msg="page_action_title_failed">
+    <div id="failed" class="hidden">
         Google Reader is not available
     </div>
     
     <div id="unauthorized" class="hidden">
-        <span id="signin_prefix" i18n:msg="popup_signin_prefix">Please </span>
-        <a id="signin" href="#" i18n:msg="popup_signin">sign in</a>
-        <span id="signin_suffix" i18n:msg="popup_signin_suffix"> to Google Reader.</span>
+        <span id="signin_prefix">Please </span>
+        <a id="signin" href="#">sign in</a>
+        <span id="signin_suffix"> to Google Reader.</span>
     </div>
 
-    <h1 id="removed" class="hidden" i18n:msg="popup_subscription_removed">Subscription Removed!</h1>
+    <h1 id="removed" class="hidden">Subscription Removed!</h1>
     
     <div id="connected" class="hidden">
         <div class="right">
-            <a id="remove" href="#" i18n:msg="popup_remove">Remove</a>
+            <a id="remove" href="#">Remove</a>
         </div>
         
-        <h1 id="added" class="hidden" i18n:msg="popup_subscription_added">Subscription Added!</h1>
-        <h1 id="existing" class="hidden" i18n:msg="popup_subscription">Subscription</h1>
+        <h1 id="added" class="hidden">Subscription Added!</h1>
+        <h1 id="existing" class="hidden">Subscription</h1>
         
         <div class="table fullwidth">
             <div>
-                <label for="feedName" i18n:msg="popup_feed_name">Name:</label>
+                <label for="feedName">Name:</label>
                 <input type="text" id="feedName"/>
             </div>
 
             <div>
-                <label for="folders" i18n:msg="popup_feed_folders">Folders:</label>
+                <label for="folders">Folders:</label>
                 
                 <div>
                     <input id="newFolder" type="text" />

@@ -112,7 +112,9 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             {
                 prevTitle = null;
                 setState('removed');
-            }            
+                
+                window.setTimeout(window.close, 300);
+            }
         };
         
         self.folders = function(folders, checked, newFolder)

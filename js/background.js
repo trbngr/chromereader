@@ -17,29 +17,38 @@ window.chromeReader = $.extend(window.chromeReader || { },
         });
     },
     
-    showPageAction: function(tabId, state)
+    showPageAction: function(tabId, state, arg)
     {
         if (tabId)
         {
-            var icon = 'png/page_action.png';
-            var title = this.localize('page_action_title', 'Subscribe page feed');
-            
-            if (state == 'subscribed')
-            {
-                icon = 'png/page_action_subscribed.png';
-                title = this.localize('page_action_title_subscribed', 'Edit page feed subscribtion');
-            }
-            else if (state == 'unauthorized')
+            var icon, title; 
+
+            if (state == 'unauthorized')
             {
                 icon = 'png/page_action_error.png';
-                title = this.localize('page_action_title_unauthorized', 'Please sign in to Google Reader');
+                title = this.localize('page_action_title_unauthorized', "Please sign in to Google Reader");
             }
             else if (state == 'failed')
             {
                 icon = 'png/page_action_error.png';
-                title = this.localize('page_action_title_failed', 'Google Reader not available');
+                title = this.localize('page_action_title_failed', "Google Reader not available");
             }
+            else if (state == 'subscribed')
+            {
+                icon = 'png/page_action_subscribed.png';
+                title = this.localize('page_action_title_subscribed', "Edit page feed subscribtion");
+            }
+            else
+            {
+                icon = 'png/page_action.png';
+                title = this.localize('page_action_title', "Subscribe page feed");
                 
+                if (arg)
+                {
+                    title = "Subscribe page feed (last updated on " + arg.toDateString() + ")";
+                }
+            }
+            
             chrome.pageAction.setIcon(
             {
                 tabId: tabId,
@@ -85,6 +94,14 @@ chrome.extension.onConnect.addListener(function(port)
             chromeReader.client.getSubscription(msg.data, errorHandler, function(sub)
             {
                 chromeReader.showPageAction(tabId, sub ? 'subscribed' : null);
+
+                if (!sub)
+                {
+                    chromeReader.client.getFeedUpdateTime(msg.data[0], errorHandler, function(lastUpdated)
+                    {
+                        chromeReader.showPageAction(tabId, null, lastUpdated);
+                    });
+                }
             });
         }            
     });

@@ -1,5 +1,5 @@
 $ExtName = 'ChromeReader'
-$OutDir = "..\${ExtName}_out"
+$SevenZip = "${Env:JachymkoUtil}\7-Zip\current\7z.exe"
 
 function Get-ScriptDirectory
 {
@@ -11,38 +11,7 @@ Push-Location ( Get-ScriptDirectory )
 
 try
 {
-    if (Test-Path ..\tmp)
-    {
-    	Remove-Item ..\tmp -Force -Recurse
-    }
-
-    xcopy . ..\tmp /s /e /i "/exclude:$ExtName.exclude"
-
-    $ExtDir = (Resolve-Path ..\tmp).Path
-    $ExtPem = (Resolve-Path ".\$ExtName.pem").Path
-
-    $ChromeArgs = 
-    (
-        "--pack-extension=$ExtDir", 
-        "--pack-extension-key=$ExtPem",
-        "--no-message-box"
-    )
-    
-    $chrome = Start-Process 'D:\chromium\drops\latest\chrome.exe' $ChromeArgs -PassThru -Debug -Verbose
-    $chrome.WaitForExit()
-    
-    if (Test-Path ..\tmp.crx)
-    {
-        if (-not (Test-Path $OutDir -PathType Container))
-        {
-            New-Item $OutDir -ItemType Container
-        }
-        
-        Move-Item ..\tmp.crx "${OutDir}\${ExtName}.crx"
-        Invoke-Item $OutDir
-    }
-    
-    Remove-Item ..\tmp -Force -Recurse
+    & $SevenZip a "$ExtName.zip" . -tzip -r "-x@$ExtName.exclude"
 }
 finally
 {

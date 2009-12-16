@@ -103,10 +103,8 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             {
                 client.unsubscribe(self.subscr, errorHandler, function(result)
                 {
-                    showPageAction(null);
-                    
                     view.subscription(null);
-                    window.close();
+                    showPageAction(null);
                 })
             });
 
