@@ -20,14 +20,16 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         
         function event(name)
         {
+            var $this = $(this);
+            
             return function(handler)
             {
                 if ($.isFunction(handler))
                 {
-                    return $(self).bind(name, handler);
+                    return $this.bind(name, handler);
                 }
 
-                return $(self).trigger(name, $.makeArray(arguments));
+                return $this.trigger(name, $.makeArray(arguments));
             }
         }
         

@@ -5,13 +5,11 @@
         GoogleReaderClient: function(client, baseUrl)
         {
             client = client || 'ChromeReader';
-            baseUrl = baseUrl || 'http://www.google.com/reader/';
+            baseUrl = baseUrl || 'http://www.google.com/reader/api/0/';
 
-            function makeUrl(part, type)
+            function makeUrl(part)
             {
-                type = type || 'api/0/';
-                
-                return baseUrl + type + part + 
+                return baseUrl + part + 
                        '?client=' + client + 
                        '&ck=' + new Date().valueOf();
             }
@@ -19,11 +17,6 @@
             function makeFeedId(feedOrUrl)
             {
                 return feedOrUrl.id || ('feed/' + feedOrUrl);
-            }
-
-            function makeFeedAtomUrl(feedOrUrl)
-            {
-                return makeUrl(makeFeedId(feedOrUrl), 'atom/');
             }
 
             function makeFolderId(folder)
@@ -38,20 +31,6 @@
                 options.dataType = options.dataType || 'json';
                 
                 $.ajax(options);
-            }
-            
-            function getAtom(feedOrUrl, error, success)
-            {
-                $.ajax(
-                {
-                    type: 'GET',
-                    dataType: 'xml',
-
-                    error: error,
-                    success: success,
-                    
-                    url: makeFeedAtomUrl(feedOrUrl)
-                });
             }
             
             function getSubscriptions(error, success)
@@ -92,6 +71,11 @@
                     success: success
                 });
             }
+            
+//            function getUnreadCount(feedOrUrl, error, success)
+//            {
+
+//            }
 
             function post(options)
             {
@@ -161,31 +145,41 @@
                 });
             };
 
-            this.getFeedUpdateTime = function(feed, error, success)
+            this.getFeedUnreadCount = function(feedOrUrl, error, success)
             {
-                getAtom(feed, error, function(xml)
+                get(
                 {
-                    var $updated = $('feed > updated', xml);
-                    
-                    if ($updated.length > 0)
+                    url: 'unread-count',
+                    data: { output: 'json' },
+                    error: error,
+                    success: function(result)
                     {
-                        var dateTime = $updated[0].textContent;
-                        var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateTime);
+                        var feedId = makeFeedId(feedOrUrl);
                         
-                        if (match)
+                        for (var i in result.unreadcounts)
                         {
-                            var result = new Date();
+                            var item = result.unreadcounts[i];
                             
-                            var year  = Number(match[1]);
-                            var month = Number(match[2]) - 1;
-                            var date  = Number(match[3]);
-                            
-                            result.setUTCFullYear(year);
-                            result.setUTCMonth(month);
-                            result.setUTCDate(date);
-                            
-                            success(result);
+                            if (item.id == feedId)
+                            {
+                                success(item.count);
+                                return;
+                            }
                         }
+                    }
+                });
+            };
+
+            this.getFeedUpdateTime = function(feedOrUrl, error, success)
+            {
+                get(
+                {
+                    url: 'stream/contents/' + encodeURIComponent(makeFeedId(feedOrUrl)),
+                    data: { n: 1 },
+                    error: error,
+                    success: function(feed)
+                    {
+                        success(new Date(1000 * Number(feed.updated)));
                     }
                 });
             };

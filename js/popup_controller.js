@@ -14,32 +14,31 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
         {
         }
         
-        function showPageAction(status)
+        function showPageAction(arg)
         {
-            chromeReader.showPageAction(self.tabId, status);
+            chromeReader.showPageAction(self.tabId, arg);
+        }
+
+        function showPageActionSubscribed(subscription)
+        {
+            chromeReader.showPageActionSubscribed(self.tabId, subscription);
         }
 
         function errorHandler(xhr, status, exc)
         {
-            chrome.extension.getBackgroundPage().console.log([xhr, status, exc]);
-        
+            chromeReader.tabErrorHandler(self.tabId, xhr, status, exc);
+            
             if (chromeReader.isUnauthorizedStatus(xhr.status))
             {
-                showPageAction('unauthorized');
                 view.unauthorized();
+            }
+            else if (xhr.status == 400)
+            {
+                view.fail(xhr.responseText);
             }
             else
             {
-                showPageAction('failed');
-                
-                if (xhr.status == 400)
-                {
-                    view.fail(xhr.responseText);
-                }
-                else
-                {
-                    view.fail(xhr.statusText);
-                }
+                view.fail(xhr.statusText);
             }
         }
         
@@ -63,7 +62,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 self.subscr = s;
 
                 view.subscription(s);
-                showPageAction('subscribed');
+                showPageActionSubscribed(s);
 
                 loadFolders(newFolder);
             });
@@ -104,7 +103,12 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 client.unsubscribe(self.subscr, errorHandler, function(result)
                 {
                     view.subscription(null);
-                    showPageAction(null);
+                    showPageAction();
+                    
+                    client.getFeedUpdateTime(self.subscr, errorHandler, function(lastUpdated)
+                    {
+                        showPageAction({ updated: lastUpdated });
+                    });
                 })
             });
 
