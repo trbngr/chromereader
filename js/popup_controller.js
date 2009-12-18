@@ -115,9 +115,12 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             chrome.tabs.getSelected(null, function(tab)
             {
                 self.tabId = tab.id;
-                
                 self.tabPort = chrome.tabs.connect(tab.id);
-                self.tabPort.onMessage.addListener(ensureSubscribed);
+                
+                self.tabPort.onMessage.addListener(function(feeds)
+                {
+                    ensureSubscribed(feeds.all);
+                });
                 
                 self.tabPort.postMessage('GetFeeds');
             });

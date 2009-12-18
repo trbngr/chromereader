@@ -127,8 +127,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 checked.push(newFolder);
             }
 
-            var placeholder = chromeReader.localize('popup_newfolder_placeholder', "New Folder");
-            ui.newFolder.attr('placeholder', placeholder)
+            ui.newFolder.attr('placeholder', "New Folder")
             
             if (folders && folders.length)
             {
@@ -142,8 +141,7 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             }
             else
             {
-                var label = chromeReader.localize('popup_feed_folder', "Folder:");
-                ui.foldersLabel.html(label);
+                ui.foldersLabel.html("Folder:");
             }
 
             ui.folders

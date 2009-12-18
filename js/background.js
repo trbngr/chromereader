@@ -25,13 +25,6 @@ window.chromeReader = $.extend(window.chromeReader || { },
 {
     client: new chromeReader.GoogleReaderClient(),
     
-    log: function() { console.log(arguments); },
-    
-    localize: function(key, text)
-    {
-        return chrome.i18n.getMessage(key) || (text);
-    },
-    
     openSignInPage: function()
     {
         chrome.tabs.create(
@@ -54,7 +47,7 @@ window.chromeReader = $.extend(window.chromeReader || { },
             xhr: xhr,
             status: status
         });
-    
+        
         var icon = 'png/page_action_error.png';
         var message = "Google Reader not available";
         
@@ -109,12 +102,15 @@ window.chromeReader = $.extend(window.chromeReader || { },
 chrome.extension.onConnect.addListener(function(port)
 {
     var tabId = port.tab.id;
+    var tabErrorHandler = makeTabErrorHandler(tabId);
 
     port.onMessage.addListener(function(msg)
     {
         if ((msg) && (msg.action == 'FeedsDiscovered'))
         {
-            chromeReader.client.getSubscription(msg.data, makeTabErrorHandler(tabId), function(sub)
+            console.log(msg.data);
+            
+            chromeReader.client.getSubscription(msg.data.all, tabErrorHandler, function(sub)
             {
                 if (sub)
                 {
@@ -124,7 +120,7 @@ chrome.extension.onConnect.addListener(function(port)
                 {
                     chromeReader.showPageAction(tabId);
                     
-                    chromeReader.client.getFeedUpdateTime(msg.data[0], errorHandler, function(lastUpdated)
+                    chromeReader.client.getFeedUpdateTime(msg.data.all[0], tabErrorHandler, function(lastUpdated)
                     {
                         chromeReader.showPageAction(tabId, { updated: lastUpdated });
                     });

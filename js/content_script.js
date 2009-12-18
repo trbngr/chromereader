@@ -1,49 +1,46 @@
-var Feeds = [];
-var FeedsLoaded = false;
-
-function findFeeds() 
+if (window === top) 
 {
-    if (!FeedsLoaded)
+    function findFeeds(type) 
     {
-        FeedsLoaded = true;
-    
+        var xpath = '//link[@rel="alternate"][contains(@type, "' + type + '")]';
+
+        var nodes = document.evaluate(xpath, document, null, 0, null);
+        var results = [];
         var item;
-        var result = document.evaluate(
-            '//link[@rel="alternate"][' +
-            'contains(@type, "rss") or ' +
-            'contains(@type, "atom") or ' +
-            'contains(@type, "rdf")]',
-            document, null, 0, null);
         
-        while (item = result.iterateNext())
+        while (item = nodes.iterateNext())
         {
-            Feeds.push(item.href);
+            results.push(item.href);
         }
 
-        if (Feeds.length > 0)
-        {
-            chrome.extension.connect().postMessage(
-            {
-                action: 'FeedsDiscovered',
-                data: Feeds
-            });
-        }
+        return results;
     }
-}
 
-if (window == top) 
-{
-    findFeeds();
-    window.addEventListener("focus", findFeeds);
-
-    chrome.extension.onConnect.addListener(function(port)
+    var feeds =
     {
-        port.onMessage.addListener(function(msg)
+        atom: findFeeds('atom'),
+        rss: findFeeds('rss')
+    };
+    
+    feeds.all = feeds.atom.concat(feeds.rss);
+    
+    if (feeds.all.length)
+    {
+        chrome.extension.onConnect.addListener(function(port)
         {
-            if (msg == 'GetFeeds')
+            port.onMessage.addListener(function(msg)
             {
-                port.postMessage(Feeds);
-            }
+                if (msg == 'GetFeeds')
+                {
+                    port.postMessage(feeds);
+                }
+            });
         });
-    });
+
+        chrome.extension.connect().postMessage(
+        {
+            action: 'FeedsDiscovered',
+            data: feeds
+        });
+    }
 }
