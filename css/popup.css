@@ -1,27 +1,19 @@
 body
 {
+    background: transparent;
+    
     min-width: 17em;
-    margin: 0.3em;
+    margin: 3px;
     
     cursor:default;
     -webkit-user-select:none;
 }
 
-body, input
-{
-    font: menu;
-}
-
 input[type="text"]
 {
     width: 100%;
-    /*padding: 0;*/
     margin: 0;
-}
-
-input[type="text"]:disabled
-{
-    border: solid 1px ThreeDShadow;    
+    border: solid 1px ThreeDShadow;
 }
 
 label
@@ -29,16 +21,33 @@ label
     color: MenuText;
 }
 
-label[for="feedName"], label[for="folders"]
+label[for="feedName"], 
+label[for="folders"]
 {
     padding-right: 0.2em;
 }
 
 h1 
 {
-    font-size: 120%;
+    font-size: 100%;
     font-weight: normal;
+}
+
+body.platform-win32, 
+body.platform-win32 input
+{
+    font: menu;
+}
+
+body.platform-win32 h1
+{
+    font-size: 120%;
     margin: 0 0 0.2em 0;
+}
+
+body.platform-other
+{
+    font-size: medium;
 }
 
 #connecting

@@ -150,7 +150,20 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
                 .checkboxlist('highlight', newFolder);
         };
         
-        $(window).unload(triggerRename);
+        var $window = $(window);
+        var $body = $(document.body);
+        
+        $window.unload(triggerRename);
+        
+        if (navigator.platform == 'Win32')
+        {
+            $body.addClass('platform-win32');
+        }
+        else
+        {
+            $body.addClass('platform-other');
+        }
+        
         ui.feedName.blur(triggerRename);
         
         ui.newFolder.keyup(function(e)
