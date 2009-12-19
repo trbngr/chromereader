@@ -62,7 +62,7 @@ window.chromeReader = $.extend(window.chromeReader || { },
     showPageActionSubscribed: function(tabId, subscription)
     {
         var icon = 'png/page_action_subscribed.png';
-        var title = "Edit page feed subscribtion";
+        var title = "Edit page feed subscription";
         
         doShowPageAction(tabId, icon, title);
         
