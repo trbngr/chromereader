@@ -106,10 +106,10 @@ chrome.extension.onConnect.addListener(function(port)
 
     port.onMessage.addListener(function(msg)
     {
+        console.log(msg);
+        
         if ((msg) && (msg.action == 'FeedsDiscovered'))
         {
-            console.log(msg.data);
-            
             chromeReader.client.getSubscription(msg.data.all, tabErrorHandler, function(sub)
             {
                 if (sub)
