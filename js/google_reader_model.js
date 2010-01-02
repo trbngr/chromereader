@@ -80,7 +80,7 @@
         {
             if (this.isSubscribed)
             {
-                client.setTitle(this.url, errorHandler, function()
+                client.setTitle(this.url, title, errorHandler, function()
                 {
                     model.load(success);
                 });

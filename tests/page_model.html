@@ -182,6 +182,8 @@
             client.unsubscribe = function(url, error, success)
             {
                 equal(url, 'http://blogs.msdn.com/oldnewthing/atom.xml');
+                equal(error, errorHandler, "errorHandler passed");
+                
                 success();
             }
                         
@@ -207,6 +209,34 @@
         
         asyncTest("setTitle", function()
         {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            client.setTitle = function(url, title, error, success)
+            {
+                equal(url, 'http://blogs.msdn.com/oldnewthing/atom.xml');
+                equal(title, 'The New Old Thing');
+                equal(error, errorHandler, "errorHandler passed");
+
+                client.__subscriptions[0].title = title;
+
+                success();
+            }
+                        
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+            
+            model.load(function()
+            {
+                model.feeds[0].setTitle('The New Old Thing', function()
+                {
+                    model.feeds[0].getTitle(function(title)
+                    {
+                        equal(title, 'The New Old Thing');
+                        ok(client.verify(), "Mock verification");
+                        start();
+                    });
+                });
+            });
         });
     
     </script>
