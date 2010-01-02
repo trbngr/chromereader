@@ -68,6 +68,23 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             });
         }
 
+        function init(feeds)
+        {
+            if (feeds.subscribed.length == 0)
+            {
+                if (feeds.preferred.length == 1)
+                {
+                    client.subscribe(feeds.preferred[0], errorHandler, function
+                }
+            }
+            else if (feeds.subscribed.length == 1)
+            {
+            }
+            else
+            {
+            }
+        }
+
         self.run = function()
         {
             view.addFolder(function(event, folder)
@@ -115,14 +132,11 @@ window.chromeReaderPopup = $.extend(window.chromeReaderPopup || { },
             chrome.tabs.getSelected(null, function(tab)
             {
                 self.tabId = tab.id;
-                self.tabPort = chrome.tabs.connect(tab.id);
                 
-                self.tabPort.onMessage.addListener(function(feeds)
+                chrome.tabs.sendRequest(tab.id, 'GetFeeds', function(feeds)
                 {
-                    ensureSubscribed(feeds.all);
+                    init(feeds);
                 });
-                
-                self.tabPort.postMessage('GetFeeds');
             });
         };
     }

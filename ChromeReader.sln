@@ -1,51 +1,36 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{D2BEC3DE-18B6-420B-9943-F654BE05DB6E}"
-	ProjectSection(SolutionItems) = preProject
-		css\popup.css = css\popup.css
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{C2940F8B-2A09-47D8-94C4-953B7AAD614C}"
-	ProjectSection(SolutionItems) = preProject
-		js\background.js = js\background.js
-		js\content_script.js = js\content_script.js
-		js\jquery.scrollTo-min.js = js\jquery.scrollTo-min.js
-		js\jquery.timeago.js = js\jquery.timeago.js
-		js\popup_controller.js = js\popup_controller.js
-		js\popup_view.js = js\popup_view.js
-		js\reader_client.js = js\reader_client.js
-		js\ui.checkboxlist.js = js\ui.checkboxlist.js
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "png", "png", "{0F9CA945-ABC8-4B9C-B445-DED71869A9A5}"
-	ProjectSection(SolutionItems) = preProject
-		png\logo.png = png\logo.png
-		png\page_action.png = png\page_action.png
-		png\page_action_error.png = png\page_action_error.png
-		png\page_action_subscribed.png = png\page_action_subscribed.png
-		png\throbber.gif = png\throbber.gif
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8586FE15-78F3-4407-92BB-8256C75553AF}"
-	ProjectSection(SolutionItems) = preProject
-		background.html = background.html
-		manifest.json = manifest.json
-		popup.html = popup.html
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_private", "_private", "{050E5451-6CC3-4CDC-9F63-5E483FD95265}"
-	ProjectSection(SolutionItems) = preProject
-		ChromeReader-Pack.ps1 = ChromeReader-Pack.ps1
-		ChromeReader.exclude = ChromeReader.exclude
-		ChromeReader.pem = ChromeReader.pem
-		ChromeReader.psd = ChromeReader.psd
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ChromeReader", ".", "{D25C16C7-0CFA-461D-8FBC-C2A7C0E67922}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.VirtualPath = "/ChromeReader"
+		Debug.AspNetCompiler.PhysicalPath = "..\ChromeReader\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\ChromeReader\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/ChromeReader"
+		Release.AspNetCompiler.PhysicalPath = "..\ChromeReader\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\ChromeReader\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "4615"
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D25C16C7-0CFA-461D-8FBC-C2A7C0E67922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D25C16C7-0CFA-461D-8FBC-C2A7C0E67922}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

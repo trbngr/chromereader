@@ -26,21 +26,17 @@ if (window === top)
     
     if (feeds.all.length)
     {
-        chrome.extension.onConnect.addListener(function(port)
+        chrome.extension.onRequest.addListener(function(request, sender, reply)
         {
-            port.onMessage.addListener(function(msg)
+            if (request === 'GetFeeds')
             {
-                if (msg == 'GetFeeds')
-                {
-                    port.postMessage(feeds);
-                }
-            });
+                reply(feeds);
+            }
         });
 
-        chrome.extension.connect().postMessage(
+        chrome.extension.sendRequest(feeds, function(response)
         {
-            action: 'FeedsDiscovered',
-            data: feeds
+            feeds = response;
         });
     }
 }

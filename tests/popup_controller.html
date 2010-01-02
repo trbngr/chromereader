@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link type="text/css" rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+    <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+    <script type="text/javascript" src="http://qmock.googlecode.com/svn/trunk/qmock.js"></script>
+    
+    <script type="text/javascript" src="../js/popup_controller.js"></script>
+
+    <script type="text/javascript">
+    
+        $(function()
+        {
+            function mockEvent(handler)
+            {
+            }
+
+            
+            function setupMockContentScript(feeds)
+            {
+                window.chrome = { tabs: new Mock() };
+                
+                window.chrome.tabs
+                    .expects(1)
+                    .method('getSelected')
+                    .withArguments(null, Function)
+                    .callFunctionWith({ id: 42 });
+                
+                window.chrome.tabs
+                    .expects(1)
+                    .method('sendRequest')
+                    .withArguments(42, 'GetFeeds', Function)
+                    .callFunctionWith(feeds);
+            }
+            
+            var mockView =
+            {
+                addFolder: mockEvent,
+                newFolder: mockEvent,
+                removeFolder: mockEvent,
+                rename: mockEvent,
+                signin: mockEvent,
+                unsubscribe: mockEvent
+            };            
+            
+            var feeds = 
+            {
+                all:  [ 'http://blogs.msdn.com/oldnewthing/rss.xml', 'http://blogs.msdn.com/oldnewthing/atom.xml' ],
+                atom: [ 'http://blogs.msdn.com/oldnewthing/atom.xml' ],
+                rss:  [ 'http://blogs.msdn.com/oldnewthing/rss.xml'  ],
+                subscribed:
+                [
+                    {
+                        firstitemmsec: '1260466757393',
+                        id: 'feed/http://blogs.msdn.com/oldnewthing/atom.xml',
+                        sortid: '26EB7037',
+                        title: 'The Old New Thing',
+                        categories:
+                        [
+                            { id: 'user/09958919254041355498/label/Software', label: 'Software' }
+                        ]
+                    }
+                ]
+            }
+            
+            test("run", function()
+            {
+                chromeReader = 
+                {
+                    client: new Mock()
+                };
+                
+                chromeReader.client
+                    .expects(1)
+                    .method('getSubscriptions')
+                    .withArguments(feeds.all, Variable, Function)
+                    .callFunctionWith(
+                        );
+                    
+                setupMockContentScript(feeds);
+
+                new chromeReaderPopup.Controller(mockView, chromeReader).run();
+                
+                ok(window.chrome.tabs.verify(), "chrome.tabs.verify()");
+                ok(chromeReader.client.verify(), "chromeReader.client.verify()");
+            });
+        });
+    
+    </script>
+    
+</head>
+<body>
+    <h1 id="qunit-header">Popup controller tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>

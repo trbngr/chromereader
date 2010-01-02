@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link type="text/css" rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+    <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+    <script type="text/javascript" src="http://qmock.googlecode.com/svn/trunk/qmock.js"></script>
+
+    <script type="text/javascript" src="../js/dictionary.js"></script>
+    
+    <script type="text/javascript">
+    
+        test('Empty dictionary has no keys', function()
+        {
+            deepEqual(new Dictionary().keys(), []);
+        });
+   
+        test('Empty dictionary has no values', function()
+        {
+            deepEqual(new Dictionary().values(), []);
+        });
+        
+        test('Dictionary with an entry returns correct keys', function()
+        {
+            var dict = new Dictionary();
+            dict['key'] = 'value';
+            
+            deepEqual(dict.keys(), [ 'key' ]);
+        });
+        
+        test('Dictionary with an entry returns correct values', function()
+        {
+            var dict = new Dictionary();
+            dict['key'] = 'value';
+            
+            deepEqual(dict.values(), [ 'value' ]);
+        });        
+        
+        test('Keys array constructor', function()
+        {
+            var keys = [ 'a', 'b', 'c' ];
+        
+            var dict = new Dictionary(keys);
+                
+            strictEqual(dict['a'], null);
+            strictEqual(dict['b'], null);
+            strictEqual(dict['c'], null);
+            
+            deepEqual(dict.keys(), keys);
+            deepEqual(dict.values(), [null,null,null]);
+        });
+        
+        test('Keys array+values array constructor', function()
+        {
+            var keys = [ 'a', 'b', 'c' ];
+            var values = [ 10, 20, 42 ];
+        
+            var dict = new Dictionary(keys, values);
+                
+            equal(dict['a'], 10);
+            equal(dict['b'], 20);
+            equal(dict['c'], 42);
+            
+            deepEqual(dict.keys(), keys);
+            deepEqual(dict.values(), values);
+        });
+        
+        test('Keys array+values array constructor invalid args', function()
+        {
+            var dict = new Dictionary('abcdef', 1234);
+            
+            deepEqual(dict.keys(), []);
+            deepEqual(dict.values(), []);
+        });
+        
+        test('Keys array+values array constructor args length does not match', function()
+        {
+            var keys = [ 'a' ];
+            var values = [ 10, 20, 30, 42, 50, 60, 70, 80, 90 ];
+        
+            var dict = new Dictionary(keys, values);
+            
+            deepEqual(dict.keys(), [ 'a' ]);
+            deepEqual(dict.values(), [ 10 ]);
+        });
+        
+        test('Keys function+values array ctor', function()
+        {
+            var keyGen = function(val) { return 'f/' + String(val); };
+            var values = [ 1, 2, 3, 4 ];
+            
+            var dict = new Dictionary(keyGen, values);
+            
+            deepEqual(dict.keys(), ['f/1','f/2','f/3','f/4']);
+            deepEqual(dict.values(), values);
+        });
+    
+    </script>
+    
+</head>
+<body>
+    <h1 id="qunit-header">Dictionary tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link type="text/css" rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+    <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+    <script type="text/javascript" src="http://qmock.googlecode.com/svn/trunk/qmock.js"></script>
+    
+    <script type="text/javascript" src="../js/dictionary.js"></script>
+    <script type="text/javascript" src="../js/google_reader_model.js"></script>
+    
+    <script type="text/javascript">    
+    
+        function discoverFeeds()
+        {
+            var atomUrl = 'http://blogs.msdn.com/oldnewthing/atom.xml';
+            var rssUrl = 'http://blogs.msdn.com/oldnewthing/rss.xml';
+
+            return {
+                atom: [ atomUrl ],
+                rss: [ rssUrl ],
+                
+                all: [ atomUrl, rssUrl ]
+            };
+        }
+
+        function errorHandler(xhr, status, exc)
+        {
+        }
+
+        function mockClientSubscription(url, title, categories)
+        {
+            return {
+                id: 'feed/' + url,
+                title: title,
+                categories: $.map(categories, function(c) 
+                {
+                    return { id: 'user/42/label/' + c, label: c };
+                })
+            };
+        }
+
+        function mockClientLoadOnly()
+        {
+            var mock = new Mock();
+            
+            mock.__subscriptions =
+            [
+                mockClientSubscription('http://blogs.msdn.com/oldnewthing/atom.xml', 'The Old New Thing', [ 'Test' ])
+            ];
+            
+            mock.makeFeedId = function(x)
+            {
+                return 'feed/' + x.url;
+            };
+            
+            mock.expects().method('getSubscriptions')
+                          .withArguments(Variable, Function)
+                          .callFunctionWith(
+                          {
+                              subscriptions: mock.__subscriptions
+                          });
+
+            return mock;
+        }
+            
+        asyncTest('getTitle', function()
+        {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            client.expects(1).method('getFeedContents')
+                             .withArguments('http://blogs.msdn.com/oldnewthing/atom.xml', 1, Variable, Function)
+                             .callFunctionWith(
+                             {
+                                title: 'Test title'
+                             });
+            
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+            
+            model.feeds[0].getTitle(function(title)
+            {
+                equal(title, 'Test title');
+                
+                model.load(function()
+                {
+                    model.feeds[0].getTitle(function(title)
+                    {
+                        equal(title, 'The Old New Thing');
+                        
+                        ok(client.verify(), "Mock verification");
+                        start();
+                    });
+                });
+            });
+        });
+    
+        asyncTest('getFolders', function()
+        {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+            
+            model.feeds[0].getFolders(function(folders)
+            {
+                deepEqual(folders, [], "No folders");
+                
+                model.load(function()
+                {
+                    model.feeds[0].getFolders(function(folders)
+                    {
+                        deepEqual(['Test'], folders, "One folder");
+                        
+                        ok(client.verify(), "Mock verification");
+                        start();
+                    });
+                });
+            });
+        });
+
+        asyncTest("isSubscribed", function()
+        {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+            
+            ok(!model.feeds[0].isSubscribed, "atom feed not subscribed");
+            ok(!model.feeds[1].isSubscribed, "rss feed not subscribed");
+            
+            model.load(function()
+            {
+                ok(model.feeds[0].isSubscribed, "after load, atom feed is subscribed");
+                ok(!model.feeds[1].isSubscribed, "after load, rss feed is not subscribed");
+                
+                ok(client.verify(), "Mock verification");                
+                start();
+            });
+        });
+        
+        asyncTest("subscribe", function()
+        {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            client.subscribe = function(url, error, success)
+            {
+                equal(url, 'http://blogs.msdn.com/oldnewthing/rss.xml');
+                success();
+            }
+                        
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+
+            model.load(function()
+            {
+                ok(model.feeds[0].isSubscribed, "after load, atom feed is subscribed");
+                ok(!model.feeds[1].isSubscribed, "after load, rss feed is not subscribed");
+                
+                client.__subscriptions.push(
+                    mockClientSubscription('http://blogs.msdn.com/oldnewthing/rss.xml', 'The Old New Thing (RSS)', ['Test'])
+                );
+                
+                model.feeds[1].subscribe(function()
+                {
+                    ok(model.feeds[0].isSubscribed, "after subscribe, atom feed is subscribed");
+                    ok(model.feeds[1].isSubscribed, "after subscribe, rss feed is subscribed");
+                    
+                    ok(client.verify(), "Mock verification");
+                    start();
+                });
+            });
+        });
+        
+        asyncTest("unsubscribe", function()
+        {
+            var feeds = discoverFeeds();
+            var client = mockClientLoadOnly();
+            
+            client.unsubscribe = function(url, error, success)
+            {
+                equal(url, 'http://blogs.msdn.com/oldnewthing/atom.xml');
+                success();
+            }
+                        
+            var model = new chromeReader.GoogleReaderModel(feeds, client, errorHandler);
+
+            model.load(function()
+            {
+                ok(model.feeds[0].isSubscribed, "after load, atom feed is subscribed");
+                ok(!model.feeds[1].isSubscribed, "after load, rss feed is not subscribed");
+                
+                client.__subscriptions.pop();
+                
+                model.feeds[0].unsubscribe(function()
+                {
+                    ok(!model.feeds[0].isSubscribed, "after subscribe, atom feed is not subscribed");
+                    ok(!model.feeds[1].isSubscribed, "after subscribe, rss feed is not subscribed");
+                    
+                    ok(client.verify(), "Mock verification");
+                    start();
+                });
+            });            
+        });
+        
+        asyncTest("setTitle", function()
+        {
+        });
+    
+    </script>
+    
+</head>
+<body>
+    <h1 id="qunit-header">Popup controller tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    
+    <!-- s cript type="text/javascript">
+        {
+            getLastUpdated: function(success) { success(1260466757393); },
+            getUnreadCount: function(success) { success(42); },
+            getFolders: function(success)
+            {
+                success([ 'Firearms', 'People', 'Software' ]);
+            },
+            
+            load: function(successs)
+            {
+            },
+            
+            feeds:
+            [
+                {
+                    url: 'http://blogs.msdn.com/oldnewthing/rss.xml',
+                    isSubscribed: false,
+                    isPreferred: false,
+                    
+                    getTitle: function(success) { },
+                    setTitle: function(title, success) { },
+                    
+                    getFolders: function(success) {  },
+                    addFolder: function(folder, success) { },
+                    removeFolder: function(folder, success) { },
+                    
+                    subscribe: function(success) { },
+                    unsubscribe: function(success) { }
+                },
+                
+                {
+                    url: 'http://blogs.msdn.com/oldnewthing/atom.xml',
+                    isSubscribed: true,
+                    isPreferred: true,
+                    
+                    getTitle: function(success) { success('The Old New Thing'); },
+                    setTitle: function(title, success) { success() }
+
+                    getFolders: function(success) { success([ 'Software' ]); }
+                    addFolder: function(folder, success) { success(); },
+                    removeFolder: function(folder, success) { success(); },
+                    
+                    subscribe: function(success) { },
+                    unsubscribe: function(success) { }                        
+                }
+            ]
+        }    
+    </script-->
+</body>
+</html>
