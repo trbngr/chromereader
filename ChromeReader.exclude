@@ -1,7 +1,9 @@
-.exclude
-.pem
-.ps1
-.psd
-.sln
-.suo
-.svn
+.git/
+.gitignore
+*.exclude
+*.pem
+ChromeReader-Pack.ps1
+*.psd
+*.sln
+*.suo
+*.svn
