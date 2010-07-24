@@ -18,7 +18,7 @@ input[type="text"]
 
 label
 {
-    color: MenuText;
+    color: #444;
 }
 
 label[for="feedName"], 
@@ -43,6 +43,11 @@ body.platform-win32 h1
 {
     font-size: 120%;
     margin: 0 0 0.2em 0;
+}
+
+body.platform-win32 label
+{
+    color: MenuText;
 }
 
 body.platform-other
